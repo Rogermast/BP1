@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generador Autónomo CCTV Perimetral</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#121a31;
+      --panel-2:#182242;
+      --line:#2a396b;
+      --text:#eef3ff;
+      --muted:#a8b6dd;
+      --accent:#74a7ff;
+      --good:#38d39f;
+      --warn:#ffcc66;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:linear-gradient(180deg,#09101f,#0f1730 45%,#0c1327);
+      color:var(--text);
+    }
+    .wrap{max-width:1420px;margin:0 auto;padding:24px}
+    h1,h2,h3{margin:0 0 12px}
+    .lead{color:var(--muted);margin-bottom:20px;line-height:1.5}
+    .grid{display:grid;grid-template-columns:420px 1fr;gap:20px;align-items:start}
+    .card{
+      background:rgba(18,26,49,.96);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:18px;
+      box-shadow:0 10px 30px rgba(0,0,0,.25);
+    }
+    .card + .card{margin-top:16px}
+    .section-title{font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:12px}
+    label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
+    input, select, textarea{
+      width:100%;
+      border:1px solid var(--line);
+      background:var(--panel-2);
+      color:var(--text);
+      border-radius:10px;
+      padding:10px 12px;
+      outline:none;
+    }
+    textarea{min-height:86px;resize:vertical}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+    .checks{display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px}
+    .checks label{display:flex;gap:8px;align-items:center;margin:0;color:var(--text);font-size:14px}
+    .checks input{width:auto}
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+    button{
+      border:none;
+      border-radius:12px;
+      padding:11px 14px;
+      cursor:pointer;
+      font-weight:700;
+    }
+    .primary{background:var(--accent);color:#08101f}
+    .secondary{background:#1d2a52;color:var(--text);border:1px solid var(--line)}
+    .ghost{background:transparent;color:var(--muted);border:1px dashed var(--line)}
+    .out-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+    .metric{background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:14px}
+    .metric .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+    .metric .v{font-size:24px;font-weight:700;margin-top:6px}
+    table{width:100%;border-collapse:collapse;margin-top:12px;background:#121a31;border-radius:12px;overflow:hidden}
+    th,td{padding:10px;border-bottom:1px solid #24325d;vertical-align:top;text-align:left;font-size:13px}
+    th{background:#182242;color:#cfe0ff}
+    tr:hover td{background:rgba(255,255,255,.02)}
+    .report{line-height:1.55}
+    .report h2{margin-top:18px;font-size:20px}
+    .report h3{margin-top:14px;font-size:16px;color:#cfe0ff}
+    .tag{display:inline-block;padding:5px 9px;border-radius:999px;background:#1d2a52;border:1px solid var(--line);font-size:12px;color:#dfe8ff;margin:0 6px 6px 0}
+    .good{color:var(--good)} .warn{color:var(--warn)}
+    .muted{color:var(--muted)}
+    .tiny{font-size:12px;color:var(--muted)}
+    .canvas-wrap{border:1px solid var(--line);border-radius:16px;background:#0f1730;padding:12px;margin-top:14px}
+    canvas{width:100%;height:520px;background:#edf3ff;border-radius:12px;display:block}
+    details{background:#162247;border:1px solid var(--line);padding:10px 12px;border-radius:12px;margin-top:10px}
+    summary{cursor:pointer;font-weight:700}
+    @media (max-width: 1100px){
+      .grid{grid-template-columns:1fr}
+      .out-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width: 700px){
+      .row,.row-3,.out-grid{grid-template-columns:1fr}
+    }
+    @media print{
+      body{background:#fff;color:#000}
+      .left-panel,.btns,.no-print{display:none !important}
+      .grid{grid-template-columns:1fr}
+      .card{border:1px solid #ccc;box-shadow:none;background:#fff;color:#000}
+      table{background:#fff}
+      th{background:#eee;color:#000}
+      canvas{border:1px solid #ccc}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Generador Autónomo de Propuestas CCTV Perimetral</h1>
+    <div class="lead">
+      Esta plantilla convierte tu prompt en una herramienta operativa: pregunta variables, calcula propuesta <b>FULL</b> y <b>PARCIAL</b>, estima nodos, almacenamiento, BOM y dibuja un plano conceptual tipo Google Earth simplificado para seguir desarrollando propuestas más rápido.
+    </div>
+
+    <div class="grid">
+      <div class="left-panel">
+        <div class="card">
+          <div class="section-title">1. Datos generales</div>
+          <label>Nombre del proyecto</label>
+          <input id="projectName" value="Proyecto CCTV Perimetral" />
+
+          <div class="row">
+            <div>
+              <label>Perímetro total (m)</label>
+              <input id="perimeter" type="number" min="1" step="1" value="380" />
+            </div>
+            <div>
+              <label>Tramo excluido (m)</label>
+              <input id="excluded" type="number" min="0" step="1" value="0" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Altura instalación (m)</label>
+              <input id="height" type="number" min="2" step="0.1" value="4" />
+            </div>
+            <div>
+              <label>Tipo de proyecto</label>
+              <select id="projectType">
+                <option>Residencial</option>
+                <option>Industrial</option>
+                <option>Copropiedad</option>
+                <option>Comercial</option>
+                <option>Mixto</option>
+              </select>
+            </div>
+          </div>
+
+          <label>Forma del perímetro</label>
+          <select id="shape">
+            <option value="rect">Rectangular</option>
+            <option value="lshape">En L</option>
+            <option value="irregular">Irregular</option>
+          </select>
+
+          <div class="row-3">
+            <div>
+              <label>Accesos</label>
+              <input id="accesses" type="number" min="0" step="1" value="2" />
+            </div>
+            <div>
+              <label>Esquinas críticas</label>
+              <input id="corners" type="number" min="0" step="1" value="4" />
+            </div>
+            <div>
+              <label>Ángulos &gt;70°</label>
+              <input id="angles70" type="number" min="0" step="1" value="2" />
+            </div>
+          </div>
+
+          <label>Observaciones del sitio</label>
+          <textarea id="siteNotes">Perímetro con zonas abiertas, prioridad en detección de intrusión y cobertura de accesos.</textarea>
+        </div>
+
+        <div class="card">
+          <div class="section-title">2. Modelos disponibles</div>
+          <div class="checks">
+            <label><input type="checkbox" checked id="m2449" /> DH-IPC-HFW2449TL-S-PRO</label>
+            <label><input type="checkbox" checked id="m1241" /> DHI-TPC-BF1241</label>
+            <label><input type="checkbox" checked id="m3449" /> DH-IPC-HFW3449T-ZAS-IL</label>
+            <label><input type="checkbox" checked id="m5641" /> DH-IPC-EBW5641-AS (Fisheye)</label>
+            <label><input type="checkbox" checked id="m180" /> DH-IPC-PFW3849S-A180-AS-PV (180°)</label>
+          </div>
+          <div class="tiny" style="margin-top:10px">La lógica prioriza la 3449T-ZAS-IL para perímetro principal, 2449TL para accesos y Fisheye/180° para puntos ciegos.</div>
+        </div>
+
+        <div class="card">
+          <div class="section-title">3. Parámetros técnicos</div>
+          <div class="row-3">
+            <div>
+              <label>Resolución</label>
+              <input id="resolution" value="4MP" />
+            </div>
+            <div>
+              <label>FPS</label>
+              <input id="fps" type="number" value="22" />
+            </div>
+            <div>
+              <label>Compresión</label>
+              <input id="compression" value="H.265" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>NVR</label>
+              <input id="nvr" value="DHI-NVR5232-EI2" />
+            </div>
+            <div>
+              <label>Discos instalados</label>
+              <input id="hdd" value="2 x 10TB" />
+            </div>
+          </div>
+
+          <div class="row-3">
+            <div>
+              <label>Distancia efectiva / cámara (m)</label>
+              <input id="coverage" type="number" min="1" value="25" />
+            </div>
+            <div>
+              <label>UTP promedio / cámara (m)</label>
+              <input id="utpPerCam" type="number" min="1" value="60" />
+            </div>
+            <div>
+              <label>Uplink fibra / nodo (m)</label>
+              <input id="fiberPerNode" type="number" min="1" value="120" />
+            </div>
+          </div>
+
+          <div class="row-3">
+            <div>
+              <label>Puertos por switch</label>
+              <select id="switchPorts">
+                <option value="8">8</option>
+                <option value="16">16</option>
+              </select>
+            </div>
+            <div>
+              <label>Capacidad HDD total (TB)</label>
+              <input id="hddTB" type="number" min="1" value="20" />
+            </div>
+            <div>
+              <label>Máx. PoE (m)</label>
+              <input id="poeMax" type="number" min="1" value="120" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card no-print">
+          <div class="section-title">4. Acciones</div>
+          <div class="btns">
+            <button class="primary" onclick="generateProposal()">Generar propuesta</button>
+            <button class="secondary" onclick="window.print()">Imprimir / PDF</button>
+            <button class="ghost" onclick="downloadJSON()">Exportar JSON</button>
+            <button class="ghost" onclick="loadDemo()">Cargar demo</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="section-title">Resumen ejecutivo</div>
+          <div class="out-grid" id="metrics"></div>
+          <div id="tags"></div>
+          <div class="canvas-wrap">
+            <div class="tiny">Plano conceptual automático</div>
+            <canvas id="planCanvas" width="1000" height="520"></canvas>
+          </div>
+        </div>
+
+        <div class="card report" id="report"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const modelNames = {
+      main: 'DH-IPC-HFW3449T-ZAS-IL',
+      access: 'DH-IPC-HFW2449TL-S-PRO',
+      fisheye: 'DH-IPC-EBW5641-AS',
+      wide180: 'DH-IPC-PFW3849S-A180-AS-PV',
+      thermal: 'DHI-TPC-BF1241'
+    };
+
+    function ceil(n){ return Math.ceil(Number(n || 0)); }
+    function fmt(n){ return new Intl.NumberFormat('es-CO').format(Math.round(n*100)/100); }
+
+    function getData(){
+      return {
+        projectName: document.getElementById('projectName').value || 'Proyecto CCTV Perimetral',
+        perimeter: Number(document.getElementById('perimeter').value || 0),
+        excluded: Number(document.getElementById('excluded').value || 0),
+        height: Number(document.getElementById('height').value || 0),
+        projectType: document.getElementById('projectType').value,
+        shape: document.getElementById('shape').value,
+        accesses: Number(document.getElementById('accesses').value || 0),
+        corners: Number(document.getElementById('corners').value || 0),
+        angles70: Number(document.getElementById('angles70').value || 0),
+        siteNotes: document.getElementById('siteNotes').value,
+        resolution: document.getElementById('resolution').value,
+        fps: Number(document.getElementById('fps').value || 22),
+        compression: document.getElementById('compression').value,
+        nvr: document.getElementById('nvr').value,
+        hdd: document.getElementById('hdd').value,
+        coverage: Number(document.getElementById('coverage').value || 25),
+        utpPerCam: Number(document.getElementById('utpPerCam').value || 60),
+        fiberPerNode: Number(document.getElementById('fiberPerNode').value || 120),
+        switchPorts: Number(document.getElementById('switchPorts').value || 8),
+        hddTB: Number(document.getElementById('hddTB').value || 20),
+        poeMax: Number(document.getElementById('poeMax').value || 120),
+        models: {
+          m2449: document.getElementById('m2449').checked,
+          m1241: document.getElementById('m1241').checked,
+          m3449: document.getElementById('m3449').checked,
+          m5641: document.getElementById('m5641').checked,
+          m180: document.getElementById('m180').checked,
+        }
+      }
+    }
+
+    function blindStrategy(d){
+      if (d.shape === 'irregular' || d.angles70 >= 3) return {type:'180°', model:modelNames.wide180, reason:'Perímetro irregular o múltiples ángulos abiertos'};
+      if (d.corners >= 4) return {type:'Fisheye 360°', model:modelNames.fisheye, reason:'Alta concentración de esquinas/puntos de convergencia'};
+      return {type:'Cámaras cruzadas', model:modelNames.main, reason:'Refuerzo direccional suficiente en cambios de dirección'};
+    }
+
+    function calcProposal(mode, d){
+      const baseLength = mode === 'FULL' ? d.perimeter : Math.max(d.perimeter - d.excluded, 0);
+      const baseCams = ceil(baseLength / d.coverage);
+      const blind = blindStrategy(d);
+      const blindExtra = blind.type === 'Cámaras cruzadas'
+        ? Math.max(1, ceil((d.corners + d.angles70) / 2))
+        : Math.max(1, ceil((d.corners + d.angles70) / 3));
+      const accessCams = d.accesses > 0 ? d.accesses : 0;
+      const total = baseCams + blindExtra + accessCams;
+      const nodes = ceil(total / d.switchPorts);
+      const utpMeters = total * d.utpPerCam;
+      const fiberMeters = nodes * d.fiberPerNode;
+      const conduits = ceil((total) / 4);
+
+      const dist = {
+        perimeterMain: Math.max(0, total - accessCams - blindExtra),
+        access: accessCams,
+        blind: blindExtra
+      };
+
+      const bom = [];
+      if (dist.perimeterMain > 0) bom.push({item:modelNames.main, qty:dist.perimeterMain, note:'Cobertura perimetral principal'});
+      if (dist.access > 0) bom.push({item:modelNames.access, qty:dist.access, note:'Accesos peatonales/vehiculares'});
+      if (dist.blind > 0) bom.push({item:blind.model, qty:dist.blind, note:'Refuerzo de puntos ciegos'});
+      bom.push({item:`Switch Ruijie PoE ${d.switchPorts} puertos`, qty:nodes, note:'Nodo de concentración'});
+      bom.push({item:'Gabinete NEMA por nodo', qty:nodes, note:'Protección de equipos'});
+      bom.push({item:'Fibra óptica backbone (m)', qty:fiberMeters, note:'Nodo a cabecera'});
+      bom.push({item:'Cable UTP categoría exterior (m)', qty:utpMeters, note:'Cámaras a nodo'});
+      bom.push({item:'Tubería SCH40 3/4" (tramos estimados)', qty:conduits, note:'Máx. 4 UTP por tubo'});
+      bom.push({item:'Conectores, patch cords y accesorios', qty:total + nodes, note:'Reserva técnica'});
+
+      const storage = [3,4,6].map(mbps => {
+        const gbDay = 10.8 * mbps * total;
+        const days = (d.hddTB * 1000) / gbDay;
+        return {mbps, gbDay, days};
+      });
+
+      return { mode, baseLength, baseCams, blind, blindExtra, accessCams, total, nodes, utpMeters, fiberMeters, conduits, dist, bom, storage };
+    }
+
+    function validation(d, full, partial){
+      const tech = [
+        `Analítica prevista: Tripwire + Intrusion Detection con clasificación humano/vehículo.`,
+        `PoE máximo declarado: ${fmt(d.poeMax)} m; diseño usando promedio de ${fmt(d.utpPerCam)} m por cámara.`,
+        `Segmentación RETIE: datos y energía deben ir independientes.`,
+        `Topología planteada: Cámara → Nodo → Backbone fibra → NVR.`
+      ];
+      const oper = [
+        `FULL prioriza continuidad de cobertura alrededor de todo el perímetro.`,
+        `PARCIAL optimiza CAPEX excluyendo ${fmt(d.excluded)} m sin sacrificar accesos ni puntos críticos.`,
+        `Nodos estimados: FULL ${full.nodes}, PARCIAL ${partial.nodes}.`,
+        `Se recomienda validar visuales reales, alturas, vegetación, postes y acometidas antes del cierre comercial.`
+      ];
+      const com = [
+        `La propuesta FULL ofrece mayor robustez de detección y menor riesgo operacional.`,
+        `La propuesta PARCIAL reduce cantidad de cámaras y metraje de infraestructura.`,
+        `Se pueden emitir dos versiones: técnica detallada y comercial resumida para cliente final.`
+      ];
+      return { tech, oper, com };
+    }
+
+    function renderMetrics(full, partial, d){
+      const metrics = document.getElementById('metrics');
+      metrics.innerHTML = `
+        <div class="metric"><div class="k">Proyecto</div><div class="v">${d.projectType}</div></div>
+        <div class="metric"><div class="k">Cámaras FULL</div><div class="v">${full.total}</div></div>
+        <div class="metric"><div class="k">Cámaras PARCIAL</div><div class="v">${partial.total}</div></div>
+        <div class="metric"><div class="k">NVR</div><div class="v" style="font-size:18px">${d.nvr}</div></div>
+      `;
+      document.getElementById('tags').innerHTML = `
+        <span class="tag">Resolución ${d.resolution}</span>
+        <span class="tag">${d.fps} FPS</span>
+        <span class="tag">${d.compression}</span>
+        <span class="tag">Ruijie PoE</span>
+        <span class="tag">Backbone fibra</span>
+        <span class="tag">RETIE</span>
+      `;
+    }
+
+    function bomTable(bom){
+      return `<table>
+        <thead><tr><th>Ítem</th><th>Cantidad</th><th>Observación</th></tr></thead>
+        <tbody>${bom.map(r => `<tr><td>${r.item}</td><td>${fmt(r.qty)}</td><td>${r.note}</td></tr>`).join('')}</tbody>
+      </table>`;
+    }
+
+    function storageTable(rows){
+      return `<table>
+        <thead><tr><th>Bitrate</th><th>GB / día</th><th>Días aprox. con HDD instalado</th></tr></thead>
+        <tbody>${rows.map(r => `<tr><td>${r.mbps} Mbps</td><td>${fmt(r.gbDay)}</td><td>${fmt(r.days)} días</td></tr>`).join('')}</tbody>
+      </table>`;
+    }
+
+    function coordTable(d, proposal){
+      const rows = [];
+      const count = proposal.total;
+      for(let i=1;i<=count;i++){
+        const lat = (3.4400 + i * 0.00012).toFixed(6);
+        const lng = (-76.5300 - i * 0.00010).toFixed(6);
+        let type = modelNames.main;
+        if (i <= proposal.accessCams) type = modelNames.access;
+        if (i > proposal.accessCams && i <= proposal.accessCams + proposal.blindExtra) type = proposal.blind.model;
+        const orient = (i * (360 / count)).toFixed(0) + '°';
+        rows.push(`<tr><td>CAM-${i}</td><td>${lat}</td><td>${lng}</td><td>${type}</td><td>${orient}</td></tr>`);
+      }
+      return `<table>
+        <thead><tr><th>ID</th><th>Latitud</th><th>Longitud</th><th>Tipo</th><th>Orientación</th></tr></thead>
+        <tbody>${rows.join('')}</tbody>
+      </table>`;
+    }
+
+    function renderReport(d, full, partial){
+      const v = validation(d, full, partial);
+      const report = document.getElementById('report');
+      report.innerHTML = `
+        <h2>${d.projectName}</h2>
+        <div class="muted">Tipo: ${d.projectType} · Altura: ${fmt(d.height)} m · Perímetro: ${fmt(d.perimeter)} m · Tramo excluido: ${fmt(d.excluded)} m</div>
+        <p>${d.siteNotes}</p>
+
+        <h2>Propuesta 1 · FULL cobertura</h2>
+        <p><b>Cálculo base:</b> ${fmt(full.baseLength)} / ${fmt(d.coverage)} = <b>${full.baseCams}</b> cámaras base.</p>
+        <p><b>Refuerzo de puntos ciegos:</b> ${full.blindExtra} con estrategia <b>${full.blind.type}</b> (${full.blind.reason}).</p>
+        <p><b>Accesos:</b> ${full.accessCams}. <b>Total:</b> <span class="good">${full.total} cámaras</span> y <b>${full.nodes} nodos</b>.</p>
+        <h3>Distribución</h3>
+        <p>Perímetro principal: ${full.dist.perimeterMain} · Accesos: ${full.dist.access} · Refuerzos: ${full.dist.blind}</p>
+        <h3>BOM FULL</h3>
+        ${bomTable(full.bom)}
+        <h3>Almacenamiento FULL</h3>
+        ${storageTable(full.storage)}
+
+        <h2>Propuesta 2 · PARCIAL optimizada</h2>
+        <p><b>Cálculo base:</b> (${fmt(d.perimeter)} - ${fmt(d.excluded)}) / ${fmt(d.coverage)} = <b>${partial.baseCams}</b> cámaras base.</p>
+        <p><b>Refuerzo de puntos ciegos:</b> ${partial.blindExtra} con estrategia <b>${partial.blind.type}</b>.</p>
+        <p><b>Accesos:</b> ${partial.accessCams}. <b>Total:</b> <span class="warn">${partial.total} cámaras</span> y <b>${partial.nodes} nodos</b>.</p>
+        <h3>BOM PARCIAL</h3>
+        ${bomTable(partial.bom)}
+        <h3>Almacenamiento PARCIAL</h3>
+        ${storageTable(partial.storage)}
+
+        <h2>Validación técnica</h2>
+        <ul>${v.tech.map(x=>`<li>${x}</li>`).join('')}</ul>
+
+        <h2>Validación operativa</h2>
+        <ul>${v.oper.map(x=>`<li>${x}</li>`).join('')}</ul>
+
+        <h2>Validación comercial</h2>
+        <ul>${v.com.map(x=>`<li>${x}</li>`).join('')}</ul>
+
+        <details open>
+          <summary>Tabla de coordenadas – FULL</summary>
+          ${coordTable(d, full)}
+        </details>
+
+        <details>
+          <summary>Tabla de coordenadas – PARCIAL</summary>
+          ${coordTable(d, partial)}
+        </details>
+      `;
+    }
+
+    function drawPlan(d, full, partial){
+      const canvas = document.getElementById('planCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle = '#edf3ff';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+
+      const shape = d.shape;
+      const points = shape === 'rect'
+        ? [[140,100],[860,100],[860,400],[140,400]]
+        : shape === 'lshape'
+          ? [[140,100],[720,100],[720,220],[860,220],[860,400],[140,400]]
+          : [[140,120],[730,90],[860,200],[790,390],[250,420],[120,260]];
+
+      ctx.strokeStyle = '#2f5ea8';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      points.forEach((p,i)=> i===0 ? ctx.moveTo(p[0],p[1]) : ctx.lineTo(p[0],p[1]));
+      ctx.closePath();
+      ctx.stroke();
+
+      ctx.fillStyle = '#24437c';
+      points.forEach((p,i)=>{
+        ctx.beginPath(); ctx.arc(p[0],p[1],6,0,Math.PI*2); ctx.fill();
+        ctx.fillText('V'+(i+1), p[0]+10, p[1]-8);
+      });
+
+      // NVR
+      ctx.fillStyle = '#1d7c5d';
+      ctx.fillRect(430, 228, 120, 56);
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 14px Arial';
+      ctx.fillText('NVR / CABECERA', 446, 260);
+
+      // Nodes
+      const nodeCount = full.nodes;
+      const nodePoints = [];
+      for(let i=0;i<nodeCount;i++){
+        const x = 180 + i * ((640)/(Math.max(nodeCount-1,1)));
+        const y = i % 2 === 0 ? 60 : 455;
+        nodePoints.push([x,y]);
+        ctx.fillStyle = '#6f46c9';
+        ctx.fillRect(x-26,y-16,52,32);
+        ctx.fillStyle = '#fff';
+        ctx.fillText('N'+(i+1), x-10, y+5);
+        ctx.strokeStyle = '#8b69da';
+        ctx.setLineDash([8,6]);
+        ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(490,256); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Cameras around perimeter based on FULL
+      const camCount = full.total;
+      const perimeterPath = [];
+      for(let i=0;i<points.length;i++){
+        const a = points[i], b = points[(i+1)%points.length];
+        perimeterPath.push([a,b]);
+      }
+      let remaining = camCount;
+      const cams = [];
+      perimeterPath.forEach((seg, idx)=>{
+        const take = Math.max(1, Math.round(camCount / perimeterPath.length));
+        for(let j=1;j<=take && remaining>0;j++,remaining--){
+          const t = j/(take+1);
+          const x = seg[0][0] + (seg[1][0]-seg[0][0]) * t;
+          const y = seg[0][1] + (seg[1][1]-seg[0][1]) * t;
+          cams.push([x,y,idx]);
+        }
+      });
+      while(remaining>0){ cams.push([points[0][0]+remaining*10, points[0][1], 0]); remaining--; }
+
+      cams.forEach((c,i)=>{
+        ctx.fillStyle = i < full.accessCams ? '#e67e22' : (i < full.accessCams + full.blindExtra ? '#d63031' : '#111');
+        ctx.beginPath(); ctx.arc(c[0],c[1],5,0,Math.PI*2); ctx.fill();
+        const angle = (i/cams.length) * Math.PI*2;
+        const dx = Math.cos(angle)*26, dy = Math.sin(angle)*26;
+        ctx.strokeStyle = '#111';
+        ctx.beginPath(); ctx.moveTo(c[0],c[1]); ctx.lineTo(c[0]+dx,c[1]+dy); ctx.stroke();
+      });
+
+      ctx.fillStyle = '#111';
+      ctx.font = '12px Arial';
+      ctx.fillText('Negro: perimetral · Naranja: acceso · Rojo: punto ciego/refuerzo', 20, 500);
+    }
+
+    function downloadJSON(){
+      const d = getData();
+      const full = calcProposal('FULL', d);
+      const partial = calcProposal('PARCIAL', d);
+      const payload = {input:d, full, partial};
+      const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'propuesta_cctv_perimetral.json';
+      a.click();
+    }
+
+    function loadDemo(){
+      document.getElementById('projectName').value = 'Copropiedad Perimetral Demo';
+      document.getElementById('perimeter').value = 550;
+      document.getElementById('excluded').value = 70;
+      document.getElementById('height').value = 4;
+      document.getElementById('projectType').value = 'Copropiedad';
+      document.getElementById('shape').value = 'irregular';
+      document.getElementById('accesses').value = 3;
+      document.getElementById('corners').value = 6;
+      document.getElementById('angles70').value = 4;
+      document.getElementById('siteNotes').value = 'Predio con cambios de dirección, accesos múltiples y necesidad de propuesta FULL y PARCIAL.';
+      generateProposal();
+    }
+
+    function generateProposal(){
+      const d = getData();
+      const full = calcProposal('FULL', d);
+      const partial = calcProposal('PARCIAL', d);
+      renderMetrics(full, partial, d);
+      renderReport(d, full, partial);
+      drawPlan(d, full, partial);
+    }
+
+    generateProposal();
+  </script>
+</body>
+</html>
