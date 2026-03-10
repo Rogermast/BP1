@@ -3,173 +3,82 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Generador Autónomo CCTV Perimetral</title>
+  <title>Generador CCTV Perimetral Pro v3</title>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <style>
-    :root{
-      --bg:#0b1020;
-      --panel:#121a31;
-      --panel-2:#182242;
-      --line:#2a396b;
-      --text:#eef3ff;
-      --muted:#a8b6dd;
-      --accent:#74a7ff;
-      --good:#38d39f;
-      --warn:#ffcc66;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:Arial, Helvetica, sans-serif;
-      background:linear-gradient(180deg,#09101f,#0f1730 45%,#0c1327);
-      color:var(--text);
-    }
-    .wrap{max-width:1420px;margin:0 auto;padding:24px}
-    h1,h2,h3{margin:0 0 12px}
-    .lead{color:var(--muted);margin-bottom:20px;line-height:1.5}
-    .grid{display:grid;grid-template-columns:420px 1fr;gap:20px;align-items:start}
-    .card{
-      background:rgba(18,26,49,.96);
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:18px;
-      box-shadow:0 10px 30px rgba(0,0,0,.25);
-    }
-    .card + .card{margin-top:16px}
-    .section-title{font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:12px}
-    label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
-    input, select, textarea{
-      width:100%;
-      border:1px solid var(--line);
-      background:var(--panel-2);
-      color:var(--text);
-      border-radius:10px;
-      padding:10px 12px;
-      outline:none;
-    }
-    textarea{min-height:86px;resize:vertical}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-    .checks{display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px}
-    .checks label{display:flex;gap:8px;align-items:center;margin:0;color:var(--text);font-size:14px}
-    .checks input{width:auto}
-    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
-    button{
-      border:none;
-      border-radius:12px;
-      padding:11px 14px;
-      cursor:pointer;
-      font-weight:700;
-    }
-    .primary{background:var(--accent);color:#08101f}
-    .secondary{background:#1d2a52;color:var(--text);border:1px solid var(--line)}
-    .ghost{background:transparent;color:var(--muted);border:1px dashed var(--line)}
-    .out-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
-    .metric{background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:14px}
-    .metric .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-    .metric .v{font-size:24px;font-weight:700;margin-top:6px}
-    table{width:100%;border-collapse:collapse;margin-top:12px;background:#121a31;border-radius:12px;overflow:hidden}
-    th,td{padding:10px;border-bottom:1px solid #24325d;vertical-align:top;text-align:left;font-size:13px}
-    th{background:#182242;color:#cfe0ff}
-    tr:hover td{background:rgba(255,255,255,.02)}
-    .report{line-height:1.55}
-    .report h2{margin-top:18px;font-size:20px}
-    .report h3{margin-top:14px;font-size:16px;color:#cfe0ff}
+    :root{--bg:#0b1020;--panel:#121a31;--panel2:#182242;--line:#2a396b;--text:#eef3ff;--muted:#a8b6dd;--accent:#74a7ff;--good:#38d39f;--warn:#ffcc66;--bad:#ff7b7b}
+    *{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#09101f,#0f1730 45%,#0c1327);color:var(--text)}
+    .wrap{max-width:1650px;margin:0 auto;padding:24px} h1,h2,h3{margin:0 0 12px}.lead{color:var(--muted);line-height:1.5;margin-bottom:18px}
+    .grid{display:grid;grid-template-columns:520px 1fr;gap:18px;align-items:start}.card{background:rgba(18,26,49,.96);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.22)} .card+.card{margin-top:14px}
+    .section-title{font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:12px} label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
+    input,select,textarea{width:100%;border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:10px;padding:10px 12px;outline:none} textarea{min-height:88px;resize:vertical}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}.row4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+    .checks{display:grid;gap:8px}.checks label{display:flex;gap:8px;align-items:center;margin:0;color:var(--text);font-size:14px}.checks input{width:auto}
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px} button{border:none;border-radius:12px;padding:11px 14px;cursor:pointer;font-weight:700}
+    .primary{background:var(--accent);color:#08101f}.secondary{background:#1d2a52;color:#fff;border:1px solid var(--line)}.ghost{background:transparent;color:var(--muted);border:1px dashed var(--line)}
+    .out-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:14px}.metric{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px}
+    .metric .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}.metric .v{font-size:22px;font-weight:700;margin-top:6px}
     .tag{display:inline-block;padding:5px 9px;border-radius:999px;background:#1d2a52;border:1px solid var(--line);font-size:12px;color:#dfe8ff;margin:0 6px 6px 0}
-    .good{color:var(--good)} .warn{color:var(--warn)}
-    .muted{color:var(--muted)}
-    .tiny{font-size:12px;color:var(--muted)}
-    .canvas-wrap{border:1px solid var(--line);border-radius:16px;background:#0f1730;padding:12px;margin-top:14px}
-    canvas{width:100%;height:520px;background:#edf3ff;border-radius:12px;display:block}
-    details{background:#162247;border:1px solid var(--line);padding:10px 12px;border-radius:12px;margin-top:10px}
-    summary{cursor:pointer;font-weight:700}
-    @media (max-width: 1100px){
-      .grid{grid-template-columns:1fr}
-      .out-grid{grid-template-columns:repeat(2,1fr)}
-    }
-    @media (max-width: 700px){
-      .row,.row-3,.out-grid{grid-template-columns:1fr}
-    }
-    @media print{
-      body{background:#fff;color:#000}
-      .left-panel,.btns,.no-print{display:none !important}
-      .grid{grid-template-columns:1fr}
-      .card{border:1px solid #ccc;box-shadow:none;background:#fff;color:#000}
-      table{background:#fff}
-      th{background:#eee;color:#000}
-      canvas{border:1px solid #ccc}
-    }
+    table{width:100%;border-collapse:collapse;margin-top:12px;background:#121a31;border-radius:12px;overflow:hidden} th,td{padding:10px;border-bottom:1px solid #24325d;vertical-align:top;text-align:left;font-size:13px} th{background:#182242;color:#cfe0ff}
+    .report{line-height:1.55}.report h2{margin-top:18px;font-size:20px}.report h3{margin-top:14px;font-size:16px;color:#cfe0ff}.tiny{font-size:12px;color:var(--muted)} .good{color:var(--good)} .warn{color:var(--warn)} .bad{color:var(--bad)} .muted{color:var(--muted)}
+    .canvas-wrap{border:1px solid var(--line);border-radius:16px;background:#0f1730;padding:12px;margin-top:14px} canvas{width:100%;height:560px;background:#edf3ff;border-radius:12px;display:block}
+    details{background:#162247;border:1px solid var(--line);padding:10px 12px;border-radius:12px;margin-top:10px} summary{cursor:pointer;font-weight:700}.node-table input,.node-table select{padding:6px 8px;border-radius:8px}
+    .node-table .cam-wrap{display:flex;flex-wrap:wrap;gap:6px}.node-table .cam-wrap input{width:72px}.pill{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700}.pill.good{background:rgba(56,211,159,.12)}.pill.warn{background:rgba(255,204,102,.14)}.pill.bad{background:rgba(255,123,123,.14)}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.tab{padding:9px 12px;border-radius:999px;border:1px solid var(--line);background:#132040;color:#dfe8ff;cursor:pointer;font-weight:700}.tab.active{background:var(--accent);color:#08101f}.tab-panel{display:none}.tab-panel.active{display:block}
+    .drop{border:1px dashed var(--line);border-radius:12px;padding:12px;background:#101937}.image-preview{max-height:170px;max-width:100%;display:block;margin-top:10px;border-radius:10px;border:1px solid var(--line)}
+    @media (max-width:1280px){.grid{grid-template-columns:1fr}.out-grid{grid-template-columns:repeat(3,1fr)}} @media (max-width:780px){.row,.row3,.row4,.out-grid{grid-template-columns:1fr}} @media print{body{background:#fff;color:#000}.left-panel,.btns,.no-print,.tabs{display:none!important}.grid{grid-template-columns:1fr}.card{border:1px solid #ccc;box-shadow:none;background:#fff;color:#000}table{background:#fff}th{background:#eee;color:#000}canvas{border:1px solid #ccc}}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Diseñador de Propuestas CCTV Perimetral MAST</h1>
-    <div class="lead">
-      Esta plantilla convierte tu informacion de la visita en una herramienta operativa: pregunta variables, calcula propuesta <b>FULL</b> y <b>PARCIAL</b>, estima nodos, almacenamiento, BOM y dibuja un plano conceptual tipo Google Earth simplificado para seguir desarrollando propuestas más rápido.
-    </div>
-
-    <div class="grid">
-      <div class="left-panel">
-        <div class="card">
-          <div class="section-title">1. Datos generales</div>
-          <label>Nombre del proyecto</label>
-          <input id="projectName" value="Proyecto CCTV Perimetral" />
-
-          <div class="row">
-            <div>
-              <label>Perímetro total (m)</label>
-              <input id="perimeter" type="number" min="1" step="1" value="380" />
-            </div>
-            <div>
-              <label>Tramo excluido (m)</label>
-              <input id="excluded" type="number" min="0" step="1" value="0" />
-            </div>
-          </div>
-
-          <div class="row">
-            <div>
-              <label>Altura instalación (m)</label>
-              <input id="height" type="number" min="2" step="0.1" value="4" />
-            </div>
-            <div>
-              <label>Tipo de proyecto</label>
-              <select id="projectType">
-                <option>Residencial</option>
-                <option>Industrial</option>
-                <option>Copropiedad</option>
-                <option>Comercial</option>
-                <option>Mixto</option>
-              </select>
-            </div>
-          </div>
-
-          <label>Forma del perímetro</label>
-          <select id="shape">
-            <option value="rect">Rectangular</option>
-            <option value="lshape">En L</option>
-            <option value="irregular">Irregular</option>
-          </select>
-
-          <div class="row-3">
-            <div>
-              <label>Accesos</label>
-              <input id="accesses" type="number" min="0" step="1" value="2" />
-            </div>
-            <div>
-              <label>Esquinas críticas</label>
-              <input id="corners" type="number" min="0" step="1" value="4" />
-            </div>
-            <div>
-              <label>Ángulos &gt;70°</label>
-              <input id="angles70" type="number" min="0" step="1" value="2" />
-            </div>
-          </div>
-
-          <label>Observaciones del sitio</label>
-          <textarea id="siteNotes">Perímetro con zonas abiertas, prioridad en detección de intrusión y cobertura de accesos.</textarea>
+<div class="wrap">
+  <h1>Generador Autónomo de Propuestas CCTV Perimetral · Pro v3</h1>
+  <div class="lead">Versión ampliada con <b>levantamiento</b>, <b>cálculo técnico</b>, lógica por <b>ruta compartida</b>, uplinks por nodo, <b>2 hilos mínimos de fibra por nodo</b>, carga de <b>imagen del sitio</b>, importación de <b>CSV/KML/KMZ</b> y exportación del consolidado para Google Earth.</div>
+  <div class="grid">
+    <div class="left-panel">
+      <div class="card">
+        <div class="tabs">
+          <button class="tab active" onclick="switchTab('tab1',this)">Levantamiento</button>
+          <button class="tab" onclick="switchTab('tab2',this)">Cálculo técnico</button>
+          <button class="tab" onclick="switchTab('tab3',this)">Georreferencia</button>
         </div>
 
-        <div class="card">
-          <div class="section-title">2. Modelos disponibles</div>
+        <div id="tab1" class="tab-panel active">
+          <div class="section-title">1. Levantamiento del proyecto</div>
+          <div class="row">
+            <div><label>Nombre del proyecto</label><input id="projectName" value="Proyecto CCTV Perimetral" /></div>
+            <div><label>Cliente / copropiedad</label><input id="clientName" value="Cliente demo" /></div>
+          </div>
+          <div class="row3">
+            <div><label>Ciudad</label><input id="city" value="Cali" /></div>
+            <div><label>Dirección / punto de referencia</label><input id="address" value="Sin definir" /></div>
+            <div><label>Fecha de levantamiento</label><input id="surveyDate" type="date" /></div>
+          </div>
+          <div class="row">
+            <div><label>Responsable del levantamiento</label><input id="surveyor" value="Ingeniería" /></div>
+            <div><label>Tipo de proyecto</label><select id="projectType"><option>Residencial</option><option>Industrial</option><option selected>Copropiedad</option><option>Comercial</option><option>Mixto</option></select></div>
+          </div>
+          <div class="row3">
+            <div><label>Perímetro total (m)</label><input id="perimeter" type="number" min="1" step="1" value="380" /></div>
+            <div><label>Tramo excluido (m)</label><input id="excluded" type="number" min="0" step="1" value="0" /></div>
+            <div><label>Altura instalación (m)</label><input id="height" type="number" min="2" step="0.1" value="4" /></div>
+          </div>
+          <div class="row4">
+            <div><label>Forma del perímetro</label><select id="shape"><option value="rect">Rectangular</option><option value="lshape">En L</option><option value="irregular">Irregular</option></select></div>
+            <div><label>Accesos</label><input id="accesses" type="number" min="0" value="2" /></div>
+            <div><label>Esquinas críticas</label><input id="corners" type="number" min="0" value="4" /></div>
+            <div><label>Ángulos &gt;70°</label><input id="angles70" type="number" min="0" value="2" /></div>
+          </div>
+          <div class="row3">
+            <div><label>Postes / apoyos disponibles</label><input id="supports" type="number" min="0" value="0" /></div>
+            <div><label>Accesos vehiculares</label><input id="vehicularAccess" type="number" min="0" value="1" /></div>
+            <div><label>Accesos peatonales</label><input id="pedestrianAccess" type="number" min="0" value="1" /></div>
+          </div>
+          <label>Observaciones del sitio</label><textarea id="siteNotes">Perímetro con zonas abiertas, prioridad en detección de intrusión y cobertura de accesos.</textarea>
+          <label>Riesgos / hallazgos de levantamiento</label><textarea id="siteRisks">Validar vegetación, postes, acometidas, cajas de paso, visibilidad nocturna y disponibilidad real de canalización.</textarea>
+        </div>
+
+        <div id="tab2" class="tab-panel">
+          <div class="section-title">2. Cálculo técnico</div>
           <div class="checks">
             <label><input type="checkbox" checked id="m2449" /> DH-IPC-HFW2449TL-S-PRO</label>
             <label><input type="checkbox" checked id="m1241" /> DHI-TPC-BF1241</label>
@@ -177,430 +86,329 @@
             <label><input type="checkbox" checked id="m5641" /> DH-IPC-EBW5641-AS (Fisheye)</label>
             <label><input type="checkbox" checked id="m180" /> DH-IPC-PFW3849S-A180-AS-PV (180°)</label>
           </div>
-          <div class="tiny" style="margin-top:10px">La lógica prioriza la 3449T-ZAS-IL para perímetro principal, 2449TL para accesos y Fisheye/180° para puntos ciegos.</div>
-        </div>
-
-        <div class="card">
-          <div class="section-title">3. Parámetros técnicos</div>
-          <div class="row-3">
-            <div>
-              <label>Resolución</label>
-              <input id="resolution" value="4MP" />
-            </div>
-            <div>
-              <label>FPS</label>
-              <input id="fps" type="number" value="22" />
-            </div>
-            <div>
-              <label>Compresión</label>
-              <input id="compression" value="H.265" />
-            </div>
+          <div class="tiny" style="margin-top:8px">Prioridad automática: 3449 para perímetro principal, 2449 accesos y 180°/fisheye/cámaras cruzadas para puntos ciegos.</div>
+          <div class="row3">
+            <div><label>Resolución</label><input id="resolution" value="4MP" /></div>
+            <div><label>FPS</label><input id="fps" type="number" value="22" /></div>
+            <div><label>Compresión</label><input id="compression" value="H.265" /></div>
           </div>
-
+          <div class="row">
+            <div><label>NVR</label><input id="nvr" value="DHI-NVR5232-EI2" /></div>
+            <div><label>Discos instalados</label><input id="hdd" value="2 x 10TB" /></div>
+          </div>
+          <div class="row4">
+            <div><label>Distancia efectiva / cámara (m)</label><input id="coverage" type="number" min="1" value="25" /></div>
+            <div><label>UTP promedio / cámara (m)</label><input id="utpPerCam" type="number" min="1" value="60" /></div>
+            <div><label>Uplink fibra / nodo (m)</label><input id="fiberPerNode" type="number" min="1" value="120" /></div>
+            <div><label>Capacidad HDD total (TB)</label><input id="hddTB" type="number" min="1" value="20" /></div>
+          </div>
+          <div class="row4">
+            <div><label>Puertos por switch</label><select id="switchPorts"><option value="8">8</option><option value="16">16</option></select></div>
+            <div><label>Máx. PoE permitido (m)</label><input id="poeMax" type="number" min="1" value="120" /></div>
+            <div><label>% colas / reserva UTP</label><input id="tailPct" type="number" min="0" value="10" /></div>
+            <div><label>% reserva fibra / AC</label><input id="tailPctInfra" type="number" min="0" value="10" /></div>
+          </div>
+          <div class="row4">
+            <div><label>Máx. UTP por tubo</label><input id="maxUtpTube" type="number" min="1" value="4" /></div>
+            <div><label>Margen adicional nodo-poste (m)</label><input id="nodeMargin" type="number" min="0" step="0.1" value="1" /></div>
+            <div><label>Hilos de fibra por nodo</label><input id="fiberCoresPerNode" type="number" min="2" value="2" /></div>
+            <div><label>Modo puntos ciegos</label><select id="blindMode"><option value="auto">Automático</option><option value="manual">Manual</option><option value="mixed">Mixto</option></select></div>
+          </div>
+          <div class="row3">
+            <div><label>Manual cámaras cruzadas</label><input id="manualCross" type="number" min="0" value="0" /></div>
+            <div><label>Manual fisheye 360°</label><input id="manualFish" type="number" min="0" value="0" /></div>
+            <div><label>Manual cámaras 180°</label><input id="manual180" type="number" min="0" value="0" /></div>
+          </div>
           <div class="row">
             <div>
-              <label>NVR</label>
-              <input id="nvr" value="DHI-NVR5232-EI2" />
+              <label>Usar cálculo detallado</label>
+              <select id="useDetailed" onchange="toggleDetailed()"><option value="no">No, solo estimado</option><option value="yes">Sí, usar distancias reales</option></select>
             </div>
             <div>
-              <label>Discos instalados</label>
-              <input id="hdd" value="2 x 10TB" />
+              <label>Cantidad de nodos</label>
+              <div class="btns" style="margin-top:0"><input id="numNodos" type="number" min="1" max="20" value="1" /><button class="secondary" type="button" onclick="generateNodes()">Generar</button></div>
             </div>
           </div>
-
-          <div class="row-3">
-            <div>
-              <label>Distancia efectiva / cámara (m)</label>
-              <input id="coverage" type="number" min="1" value="25" />
-            </div>
-            <div>
-              <label>UTP promedio / cámara (m)</label>
-              <input id="utpPerCam" type="number" min="1" value="60" />
-            </div>
-            <div>
-              <label>Uplink fibra / nodo (m)</label>
-              <input id="fiberPerNode" type="number" min="1" value="120" />
-            </div>
-          </div>
-
-          <div class="row-3">
-            <div>
-              <label>Puertos por switch</label>
-              <select id="switchPorts">
-                <option value="8">8</option>
-                <option value="16">16</option>
-              </select>
-            </div>
-            <div>
-              <label>Capacidad HDD total (TB)</label>
-              <input id="hddTB" type="number" min="1" value="20" />
-            </div>
-            <div>
-              <label>Máx. PoE (m)</label>
-              <input id="poeMax" type="number" min="1" value="120" />
-            </div>
+          <div id="detailedBlock" style="display:none">
+            <div class="tiny">Lógica por ruta compartida: cada nodo calcula la ruta troncal UTP compartida por las cámaras, sus derivaciones individuales, el uplink UTP o fibra y la AC únicamente del gabinete.</div>
+            <div id="nodesSection" style="margin-top:12px"></div>
           </div>
         </div>
 
-        <div class="card no-print">
-          <div class="section-title">4. Acciones</div>
-          <div class="btns">
-            <button class="primary" onclick="generateProposal()">Generar propuesta</button>
-            <button class="secondary" onclick="window.print()">Imprimir / PDF</button>
-            <button class="ghost" onclick="downloadJSON()">Exportar JSON</button>
-            <button class="ghost" onclick="loadDemo()">Cargar demo</button>
+        <div id="tab3" class="tab-panel">
+          <div class="section-title">3. Georreferencia e imagen</div>
+          <div class="drop">
+            <label>Imagen del sitio / captura del perímetro</label>
+            <input type="file" id="siteImage" accept="image/*" onchange="handleSiteImage(event)" />
+            <img id="siteImagePreview" class="image-preview" style="display:none" alt="Vista previa" />
           </div>
+          <div class="drop" style="margin-top:12px">
+            <label>Cargar coordenadas o perímetro</label>
+            <input type="file" id="geoFile" accept=".csv,.kml,.kmz,.json" onchange="handleGeoFile(event)" />
+            <div class="tiny">Formatos soportados: CSV, KML, KMZ y JSON del consolidado. El KML/KMZ puede contener puntos y perímetros de Google Earth.</div>
+          </div>
+          <div class="row3">
+            <div><label>Latitud cabecera / NVR</label><input id="hqLat" type="number" step="0.000001" value="3.451647" /></div>
+            <div><label>Longitud cabecera / NVR</label><input id="hqLng" type="number" step="0.000001" value="-76.531985" /></div>
+            <div><label>Nombre cabecera</label><input id="hqName" value="NVR / Cabecera" /></div>
+          </div>
+          <div class="btns">
+            <button class="ghost" onclick="exportKML()">Exportar KML</button>
+            <button class="ghost" onclick="exportKMZ()">Exportar KMZ</button>
+          </div>
+          <div id="geoSummary" class="tiny" style="margin-top:10px">Sin archivo geográfico cargado.</div>
         </div>
       </div>
 
-      <div>
-        <div class="card">
-          <div class="section-title">Resumen ejecutivo</div>
-          <div class="out-grid" id="metrics"></div>
-          <div id="tags"></div>
-          <div class="canvas-wrap">
-            <div class="tiny">Plano conceptual automático</div>
-            <canvas id="planCanvas" width="1000" height="520"></canvas>
-          </div>
+      <div class="card no-print">
+        <div class="section-title">Acciones</div>
+        <div class="btns">
+          <button class="primary" onclick="generateProposal()">Generar propuesta</button>
+          <button class="secondary" onclick="window.print()">Imprimir / PDF</button>
+          <button class="ghost" onclick="downloadJSON()">Exportar JSON consolidado</button>
+          <button class="ghost" onclick="downloadCSV()">Exportar CSV resumen</button>
+          <button class="ghost" onclick="loadConfigFile()">Cargar JSON</button>
+          <button class="ghost" onclick="loadDemo()">Cargar demo</button>
+          <input type="file" id="fileInput" accept=".json" style="display:none" onchange="handleConfigFile(event)" />
         </div>
-
-        <div class="card report" id="report"></div>
       </div>
     </div>
+
+    <div>
+      <div class="card">
+        <div class="section-title">Resumen ejecutivo</div>
+        <div class="out-grid" id="metrics"></div>
+        <div id="tags"></div>
+        <div class="canvas-wrap">
+          <div class="tiny">Plano conceptual / georreferenciado base</div>
+          <canvas id="planCanvas" width="1200" height="560"></canvas>
+        </div>
+      </div>
+      <div class="card report" id="report"></div>
+    </div>
   </div>
+</div>
 
-  <script>
-    const modelNames = {
-      main: 'DH-IPC-HFW3449T-ZAS-IL',
-      access: 'DH-IPC-HFW2449TL-S-PRO',
-      fisheye: 'DH-IPC-EBW5641-AS',
-      wide180: 'DH-IPC-PFW3849S-A180-AS-PV',
-      thermal: 'DHI-TPC-BF1241'
-    };
+<script>
+const modelNames={main:'DH-IPC-HFW3449T-ZAS-IL',access:'DH-IPC-HFW2449TL-S-PRO',fisheye:'DH-IPC-EBW5641-AS',wide180:'DH-IPC-PFW3849S-A180-AS-PV',thermal:'DHI-TPC-BF1241'};
+const geoState={image:null,coords:[],perimeter:[],source:'',raw:null};
+function ceil(n){return Math.ceil(Number(n||0));}
+function fmt(n){return new Intl.NumberFormat('es-CO',{maximumFractionDigits:2}).format(Number(n||0));}
+function esc(s){return String(s??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
+function todayISO(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function switchTab(id,btn){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');document.getElementById(id).classList.add('active');}
 
-    function ceil(n){ return Math.ceil(Number(n || 0)); }
-    function fmt(n){ return new Intl.NumberFormat('es-CO').format(Math.round(n*100)/100); }
+function getData(){
+  return {
+    projectName:val('projectName'), clientName:val('clientName'), city:val('city'), address:val('address'), surveyDate:val('surveyDate'), surveyor:val('surveyor'),
+    perimeter:num('perimeter'), excluded:num('excluded'), height:num('height'), projectType:val('projectType'), shape:val('shape'), accesses:num('accesses'), corners:num('corners'), angles70:num('angles70'), supports:num('supports'), vehicularAccess:num('vehicularAccess'), pedestrianAccess:num('pedestrianAccess'),
+    siteNotes:val('siteNotes'), siteRisks:val('siteRisks'), resolution:val('resolution'), fps:num('fps'), compression:val('compression'), nvr:val('nvr'), hdd:val('hdd'), coverage:num('coverage'), utpPerCam:num('utpPerCam'), fiberPerNode:num('fiberPerNode'), switchPorts:num('switchPorts'), hddTB:num('hddTB'), poeMax:num('poeMax'), tailPct:num('tailPct'), tailPctInfra:num('tailPctInfra'), maxUtpTube:num('maxUtpTube'), nodeMargin:num('nodeMargin'), fiberCoresPerNode:Math.max(2,num('fiberCoresPerNode')), blindMode:val('blindMode'), manualCross:num('manualCross'), manualFish:num('manualFish'), manual180:num('manual180'),
+    useDetailed:val('useDetailed')==='yes', hqLat:num('hqLat'), hqLng:num('hqLng'), hqName:val('hqName'),
+    models:{m2449:checked('m2449'),m1241:checked('m1241'),m3449:checked('m3449'),m5641:checked('m5641'),m180:checked('m180')}, detailed:getDetailedData(), geo:JSON.parse(JSON.stringify(geoState))
+  };
+}
+function val(id){return document.getElementById(id).value||'';} function num(id){return Number(document.getElementById(id).value||0);} function checked(id){return document.getElementById(id).checked;}
 
-    function getData(){
-      return {
-        projectName: document.getElementById('projectName').value || 'Proyecto CCTV Perimetral',
-        perimeter: Number(document.getElementById('perimeter').value || 0),
-        excluded: Number(document.getElementById('excluded').value || 0),
-        height: Number(document.getElementById('height').value || 0),
-        projectType: document.getElementById('projectType').value,
-        shape: document.getElementById('shape').value,
-        accesses: Number(document.getElementById('accesses').value || 0),
-        corners: Number(document.getElementById('corners').value || 0),
-        angles70: Number(document.getElementById('angles70').value || 0),
-        siteNotes: document.getElementById('siteNotes').value,
-        resolution: document.getElementById('resolution').value,
-        fps: Number(document.getElementById('fps').value || 22),
-        compression: document.getElementById('compression').value,
-        nvr: document.getElementById('nvr').value,
-        hdd: document.getElementById('hdd').value,
-        coverage: Number(document.getElementById('coverage').value || 25),
-        utpPerCam: Number(document.getElementById('utpPerCam').value || 60),
-        fiberPerNode: Number(document.getElementById('fiberPerNode').value || 120),
-        switchPorts: Number(document.getElementById('switchPorts').value || 8),
-        hddTB: Number(document.getElementById('hddTB').value || 20),
-        poeMax: Number(document.getElementById('poeMax').value || 120),
-        models: {
-          m2449: document.getElementById('m2449').checked,
-          m1241: document.getElementById('m1241').checked,
-          m3449: document.getElementById('m3449').checked,
-          m5641: document.getElementById('m5641').checked,
-          m180: document.getElementById('m180').checked,
-        }
-      }
-    }
+function blindStrategy(d){
+  const autoBase=(d.shape==='irregular'||d.angles70>=3)?{type:'180°',model:modelNames.wide180,reason:'Perímetro irregular o múltiples ángulos abiertos'}:(d.corners>=4?{type:'Fisheye 360°',model:modelNames.fisheye,reason:'Alta concentración de esquinas o convergencias'}:{type:'Cámaras cruzadas',model:modelNames.main,reason:'Refuerzo direccional suficiente en cambios de dirección'});
+  const autoCross=autoBase.type==='Cámaras cruzadas'?Math.max(1,ceil((d.corners+d.angles70)/2)):0;
+  const autoFish=autoBase.type==='Fisheye 360°'?Math.max(1,ceil((d.corners+d.angles70)/3)):0;
+  const auto180=autoBase.type==='180°'?Math.max(1,ceil((d.corners+d.angles70)/3)):0;
+  let cross=0,fish=0,wide180=0,reason='';
+  if(d.blindMode==='auto'){cross=autoCross;fish=autoFish;wide180=auto180;reason=`Modo automático: ${autoBase.reason}`;}
+  if(d.blindMode==='manual'){cross=d.manualCross;fish=d.manualFish;wide180=d.manual180;reason='Modo manual definido por el usuario';}
+  if(d.blindMode==='mixed'){cross=autoCross+d.manualCross;fish=autoFish+d.manualFish;wide180=auto180+d.manual180;reason=`Modo mixto: automático + ajustes manuales`;}
+  const total = cross + fish + wide180;
+  return {type:autoBase.type,model:autoBase.model,reason,total,cross,fish,wide180};
+}
 
-    function blindStrategy(d){
-      if (d.shape === 'irregular' || d.angles70 >= 3) return {type:'180°', model:modelNames.wide180, reason:'Perímetro irregular o múltiples ángulos abiertos'};
-      if (d.corners >= 4) return {type:'Fisheye 360°', model:modelNames.fisheye, reason:'Alta concentración de esquinas/puntos de convergencia'};
-      return {type:'Cámaras cruzadas', model:modelNames.main, reason:'Refuerzo direccional suficiente en cambios de dirección'};
-    }
+function calcProposal(mode,d){
+  const baseLength=mode==='FULL'?d.perimeter:Math.max(d.perimeter-d.excluded,0);
+  const baseCams=ceil(baseLength/Math.max(1,d.coverage));
+  const blind=blindStrategy(d);
+  const accessCams=Math.max(0,d.accesses);
+  const total=baseCams+blind.total+accessCams;
+  const nodes=ceil(total/Math.max(1,d.switchPorts));
+  const estUtpMeters=total*d.utpPerCam;
+  const estFiberMeters=nodes*d.fiberPerNode*d.fiberCoresPerNode;
+  const dist={perimeterMain:Math.max(0,total-accessCams-blind.total),access:accessCams,cross:blind.cross,fish:blind.fish,wide180:blind.wide180};
+  const bom=[];
+  if(dist.perimeterMain>0) bom.push({item:modelNames.main,qty:dist.perimeterMain,note:'Cobertura perimetral principal'});
+  if(dist.access>0) bom.push({item:modelNames.access,qty:dist.access,note:'Accesos peatonales y/o vehiculares'});
+  if(dist.cross>0) bom.push({item:'Cámaras cruzadas '+modelNames.main,qty:dist.cross,note:'Refuerzo visual de puntos ciegos'});
+  if(dist.fish>0) bom.push({item:modelNames.fisheye,qty:dist.fish,note:'Punto ciego tipo 360°'});
+  if(dist.wide180>0) bom.push({item:modelNames.wide180,qty:dist.wide180,note:'Punto ciego tipo 180°'});
+  bom.push({item:`Switch Ruijie PoE ${d.switchPorts} puertos`,qty:nodes,note:'Nodo de concentración'});
+  bom.push({item:'Gabinete NEMA por nodo',qty:nodes,note:'Protección de equipos por nodo'});
+  bom.push({item:`Fibra óptica backbone (m) · ${d.fiberCoresPerNode} hilos por nodo`,qty:estFiberMeters,note:'Transmisión y recepción por nodo'});
+  bom.push({item:'Cable UTP categoría exterior (m)',qty:estUtpMeters,note:'Cámaras a nodo'});
+  bom.push({item:'Conectores, patch cords y accesorios',qty:total+nodes,note:'Reserva técnica'});
+  const storage=[3,4,6].map(mbps=>{const gbDay=10.8*mbps*total; const days=(d.hddTB*1000)/Math.max(gbDay,1); return {mbps,gbDay,days};});
+  return {mode,baseLength,baseCams,blind,accessCams,total,nodes,estUtpMeters,estFiberMeters,dist,bom,storage};
+}
 
-    function calcProposal(mode, d){
-      const baseLength = mode === 'FULL' ? d.perimeter : Math.max(d.perimeter - d.excluded, 0);
-      const baseCams = ceil(baseLength / d.coverage);
-      const blind = blindStrategy(d);
-      const blindExtra = blind.type === 'Cámaras cruzadas'
-        ? Math.max(1, ceil((d.corners + d.angles70) / 2))
-        : Math.max(1, ceil((d.corners + d.angles70) / 3));
-      const accessCams = d.accesses > 0 ? d.accesses : 0;
-      const total = baseCams + blindExtra + accessCams;
-      const nodes = ceil(total / d.switchPorts);
-      const utpMeters = total * d.utpPerCam;
-      const fiberMeters = nodes * d.fiberPerNode;
-      const conduits = ceil((total) / 4);
+function toggleDetailed(){const show=val('useDetailed')==='yes';document.getElementById('detailedBlock').style.display=show?'block':'none';if(show&&!document.getElementById('nodesSection').innerHTML.trim()) generateNodes();}
+function generateNodes(){
+  const n=Math.max(1,Math.min(20,num('numNodos')||1));
+  let html='<table class="node-table"><thead><tr><th>Nodo</th><th>Cámaras</th><th>Ruta compartida UTP cámaras (m)</th><th>Uplink dist (m)</th><th>Uplink tipo</th><th>AC gabinete (m)</th><th>Derivaciones cámaras desde ruta compartida (m)</th></tr></thead><tbody>';
+  for(let i=0;i<n;i++) html+=`<tr><td>N${i+1}</td><td><input type="number" min="0" value="0" id="camN${i}" oninput="generateCameraInputs(${i})"></td><td><input type="number" step="0.1" value="0" id="sharedUtp${i}" oninput="generateProposal()"></td><td><input type="number" step="0.1" value="0" id="swDist${i}" oninput="generateProposal()"></td><td><select id="swTipo${i}" onchange="generateProposal()"><option value="utp">UTP</option><option value="fibra" selected>Fibra</option></select></td><td><input type="number" step="0.1" value="0" id="acDist${i}" oninput="generateProposal()"></td><td><div id="camCont${i}" class="cam-wrap">—</div></td></tr>`;
+  html+='</tbody></table>'; document.getElementById('nodesSection').innerHTML=html; for(let i=0;i<n;i++) generateCameraInputs(i);
+}
+function generateCameraInputs(i){const numC=Number(document.getElementById(`camN${i}`).value||0),cont=document.getElementById(`camCont${i}`); if(numC<=0){cont.innerHTML='—'; generateProposal(); return;} let html=''; for(let c=1;c<=numC;c++) html+=`<label style="display:flex;align-items:center;gap:6px;margin:0"><span class="tiny">C${c}</span><input type="number" step="0.1" value="0" id="n${i}c${c}" oninput="generateProposal()"></label>`; cont.innerHTML=html; generateProposal();}
 
-      const dist = {
-        perimeterMain: Math.max(0, total - accessCams - blindExtra),
-        access: accessCams,
-        blind: blindExtra
-      };
+function getDetailedData(){
+  const enabled=val('useDetailed')==='yes', n=Number(document.getElementById('numNodos')?.value||1), nodes=[];
+  if(!enabled) return {enabled:false,nodes:[],summary:null};
+  for(let i=0;i<n;i++){
+    const camInput=document.getElementById(`camN${i}`); if(!camInput) continue;
+    const cameras=Number(camInput.value||0), sharedUtp=Number(document.getElementById(`sharedUtp${i}`).value||0), swDist=Number(document.getElementById(`swDist${i}`).value||0), swTipo=document.getElementById(`swTipo${i}`).value, acDist=Number(document.getElementById(`acDist${i}`).value||0), camDists=[];
+    for(let c=1;c<=cameras;c++) camDists.push(Number(document.getElementById(`n${i}c${c}`)?.value||0));
+    nodes.push({index:i+1,cameras,sharedUtp,swDist,swTipo,acDist,camDists});
+  }
+  return {enabled:true,nodes,summary:calculateDetailedSummary(nodes)};
+}
 
-      const bom = [];
-      if (dist.perimeterMain > 0) bom.push({item:modelNames.main, qty:dist.perimeterMain, note:'Cobertura perimetral principal'});
-      if (dist.access > 0) bom.push({item:modelNames.access, qty:dist.access, note:'Accesos peatonales/vehiculares'});
-      if (dist.blind > 0) bom.push({item:blind.model, qty:dist.blind, note:'Refuerzo de puntos ciegos'});
-      bom.push({item:`Switch Ruijie PoE ${d.switchPorts} puertos`, qty:nodes, note:'Nodo de concentración'});
-      bom.push({item:'Gabinete NEMA por nodo', qty:nodes, note:'Protección de equipos'});
-      bom.push({item:'Fibra óptica backbone (m)', qty:fiberMeters, note:'Nodo a cabecera'});
-      bom.push({item:'Cable UTP categoría exterior (m)', qty:utpMeters, note:'Cámaras a nodo'});
-      bom.push({item:'Tubería SCH40 3/4" (tramos estimados)', qty:conduits, note:'Máx. 4 UTP por tubo'});
-      bom.push({item:'Conectores, patch cords y accesorios', qty:total + nodes, note:'Reserva técnica'});
+function calculateDetailedSummary(nodes){
+  const tailPct=num('tailPct')/100, tailPctInfra=num('tailPctInfra')/100, maxUtpTube=Math.max(1,num('maxUtpTube')), nodeMargin=num('nodeMargin'), poeMax=num('poeMax'), switchPorts=num('switchPorts'), fiberCores=Math.max(2,num('fiberCoresPerNode'));
+  let totalCameras=0,totalNodes=nodes.length,utpCamRaw=0,utpNodeRaw=0,fiberRaw=0,acRaw=0,tuberiaUTP=0,tuberiaAC=0,totalCablesUTP=0,overPoe=0; const nodeWarnings=[]; const nodeRows=[];
+  nodes.forEach(n=>{
+    totalCameras+=n.cameras; const cameraCables=n.cameras; const trunkCarriers=n.cameras + (n.swTipo==='utp'?1:0);
+    const trunkTubes = trunkCarriers>0?Math.ceil(trunkCarriers/maxUtpTube):0;
+    const sharedCamCable=n.sharedUtp*n.cameras; const derivations=n.camDists.reduce((a,b)=>a+b,0); const uplinkUTP=n.swTipo==='utp'?n.swDist:0; const fiberMeters=n.swTipo==='fibra'?n.swDist*fiberCores:0;
+    utpCamRaw += sharedCamCable + derivations; utpNodeRaw += uplinkUTP; fiberRaw += fiberMeters; acRaw += n.acDist; totalCablesUTP += cameraCables + (n.swTipo==='utp'?1:0);
+    tuberiaUTP += (n.sharedUtp*trunkTubes) + derivations + (n.swTipo==='utp'?n.swDist:0);
+    tuberiaAC += n.acDist;
+    const warns=[];
+    n.camDists.forEach((d,idx)=>{const real=d+n.sharedUtp; if(real>poeMax){overPoe++; warns.push(`N${n.index}-C${idx+1} suma ${fmt(real)} m (ruta compartida + derivación) y excede ${poeMax} m PoE.`);}});
+    if(n.swTipo==='utp' && n.swDist>poeMax){overPoe++; warns.push(`N${n.index} uplink UTP ${fmt(n.swDist)} m excede ${poeMax} m PoE.`);} if(n.cameras>switchPorts) warns.push(`N${n.index} supera la capacidad del switch (${n.cameras}/${switchPorts}).`);
+    if(warns.length) nodeWarnings.push(...warns);
+    nodeRows.push({node:n.index,cameras:n.cameras,shared:n.sharedUtp,derivations,utpUplink:uplinkUTP,fiberMeters,ac:n.acDist,trunkTubes});
+  });
+  const utpCameras=utpCamRaw*(1+tailPct), utpNodes=(utpNodeRaw*(1+tailPct)) + (totalCameras>0?nodeMargin*nodes.filter(n=>n.cameras>0).length:0), totalUTP=utpCameras+utpNodes, totalFiber=fiberRaw*(1+tailPctInfra), totalAC=acRaw*(1+tailPctInfra);
+  return {totalNodes,totalCameras,totalCablesUTP,utpCamRaw,utpNodeRaw,utpCameras,utpNodes,totalUTP,fiberRaw,totalFiber,acRaw,totalAC,tuberiaUTP,tuberiaAC,tuberiaTotal:tuberiaUTP+tuberiaAC,overPoe,nodeWarnings,nodeRows};
+}
 
-      const storage = [3,4,6].map(mbps => {
-        const gbDay = 10.8 * mbps * total;
-        const days = (d.hddTB * 1000) / gbDay;
-        return {mbps, gbDay, days};
-      });
+function validation(d,full,partial){
+  const det=d.detailed?.summary; const tech=[`Analítica prevista: Tripwire + Intrusion Detection con clasificación humano/vehículo.`,`PoE máximo de diseño: ${fmt(d.poeMax)} m.`,`Datos y energía independientes según RETIE.`,`Topología: Cámara → Nodo → Backbone → NVR.`,`Fibra por nodo: ${d.fiberCoresPerNode} hilo(s) mínimo para Tx/Rx.`];
+  if(det&&d.useDetailed) tech.push(`Cálculo técnico detallado habilitado con ${det.totalNodes} nodo(s) y ${det.totalCameras} cámara(s) reales cargadas.`);
+  const oper=[`FULL prioriza continuidad de cobertura alrededor del perímetro completo.`,`PARCIAL optimiza CAPEX excluyendo ${fmt(d.excluded)} m sin sacrificar accesos ni puntos críticos.`,`Nodos estimados: FULL ${full.nodes}, PARCIAL ${partial.nodes}.`,`Se debe validar visual real, postes, vegetación, cajas de paso, cruces de energía y capacidad de expansión.`];
+  if(det&&d.useDetailed) oper.push(`Metrajes reales calculados: UTP ${fmt(det.totalUTP)} m, fibra ${fmt(det.totalFiber)} m, AC ${fmt(det.totalAC)} m, tubería total ${fmt(det.tuberiaTotal)} m.`);
+  const com=[`La propuesta FULL ofrece mayor robustez de detección y menor riesgo operacional.`,`La propuesta PARCIAL reduce cantidad de cámaras e infraestructura.`,`La fase comercial puede integrarse después sobre este consolidado técnico.`]; if(det?.overPoe) com.push(`Advertencia técnica/comercial: ${det.overPoe} tramo(s) exceden PoE y exigen rediseño o migración a fibra.`);
+  return {tech,oper,com};
+}
 
-      return { mode, baseLength, baseCams, blind, blindExtra, accessCams, total, nodes, utpMeters, fiberMeters, conduits, dist, bom, storage };
-    }
+function renderMetrics(full,partial,d){const det=d.detailed?.summary; document.getElementById('metrics').innerHTML=`
+  <div class="metric"><div class="k">Proyecto</div><div class="v">${esc(d.projectType)}</div></div>
+  <div class="metric"><div class="k">Cámaras FULL</div><div class="v">${full.total}</div></div>
+  <div class="metric"><div class="k">Cámaras PARCIAL</div><div class="v">${partial.total}</div></div>
+  <div class="metric"><div class="k">Nodos estimados</div><div class="v">${full.nodes}</div></div>
+  <div class="metric"><div class="k">UTP detallado</div><div class="v">${det&&d.useDetailed?fmt(det.totalUTP)+' m':'—'}</div></div>
+  <div class="metric"><div class="k">Fibra detallada</div><div class="v">${det&&d.useDetailed?fmt(det.totalFiber)+' m':'—'}</div></div>`;
+  document.getElementById('tags').innerHTML=`<span class="tag">${esc(d.clientName)}</span><span class="tag">Resolución ${esc(d.resolution)}</span><span class="tag">${d.fps} FPS</span><span class="tag">${esc(d.compression)}</span><span class="tag">Ruijie PoE</span><span class="tag">RETIE</span><span class="tag">${d.useDetailed?'Modo detallado':'Modo estimado'}</span><span class="tag">${geoState.source||'Sin georreferencia cargada'}</span>`;}
+function bomTable(bom){return `<table><thead><tr><th>Ítem</th><th>Cantidad</th><th>Observación</th></tr></thead><tbody>${bom.map(r=>`<tr><td>${esc(r.item)}</td><td>${fmt(r.qty)}</td><td>${esc(r.note)}</td></tr>`).join('')}</tbody></table>`;}
+function storageTable(rows){return `<table><thead><tr><th>Bitrate</th><th>GB / día</th><th>Días aprox. con HDD instalado</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.mbps} Mbps</td><td>${fmt(r.gbDay)}</td><td>${fmt(r.days)} días</td></tr>`).join('')}</tbody></table>`;}
+function detailedSummaryTable(det){if(!det) return '<p class="muted">No se cargaron distancias detalladas.</p>'; return `<table><thead><tr><th>Concepto</th><th>Valor</th></tr></thead><tbody><tr><td>Total nodos</td><td>${fmt(det.totalNodes)}</td></tr><tr><td>Total cámaras reales</td><td>${fmt(det.totalCameras)}</td></tr><tr><td>Total cables UTP</td><td>${fmt(det.totalCablesUTP)}</td></tr><tr><td>UTP cámaras bruto (m)</td><td>${fmt(det.utpCamRaw)}</td></tr><tr><td>UTP nodos bruto (m)</td><td>${fmt(det.utpNodeRaw)}</td></tr><tr><td>UTP cámaras con reserva (m)</td><td>${fmt(det.utpCameras)}</td></tr><tr><td>UTP nodos con reserva (m)</td><td>${fmt(det.utpNodes)}</td></tr><tr><td>Total UTP (m)</td><td>${fmt(det.totalUTP)}</td></tr><tr><td>Fibra bruta (m)</td><td>${fmt(det.fiberRaw)}</td></tr><tr><td>Total fibra (m)</td><td>${fmt(det.totalFiber)}</td></tr><tr><td>AC bruto gabinete (m)</td><td>${fmt(det.acRaw)}</td></tr><tr><td>Total AC (m)</td><td>${fmt(det.totalAC)}</td></tr><tr><td>Tubería UTP (m)</td><td>${fmt(det.tuberiaUTP)}</td></tr><tr><td>Tubería AC (m)</td><td>${fmt(det.tuberiaAC)}</td></tr><tr><td>Tubería total (m)</td><td>${fmt(det.tuberiaTotal)}</td></tr><tr><td>Alertas PoE</td><td>${det.overPoe?`<span class="pill bad">${det.overPoe} tramo(s)</span>`:`<span class="pill good">0</span>`}</td></tr></tbody></table>`;}
+function nodeBreakdownTable(det){if(!det?.nodeRows?.length) return ''; return `<table><thead><tr><th>Nodo</th><th>Cámaras</th><th>Ruta compartida (m)</th><th>Derivaciones (m)</th><th>Uplink UTP (m)</th><th>Fibra (m)</th><th>AC gabinete (m)</th><th>Tubos troncales UTP</th></tr></thead><tbody>${det.nodeRows.map(r=>`<tr><td>N${r.node}</td><td>${fmt(r.cameras)}</td><td>${fmt(r.shared)}</td><td>${fmt(r.derivations)}</td><td>${fmt(r.utpUplink)}</td><td>${fmt(r.fiberMeters)}</td><td>${fmt(r.ac)}</td><td>${fmt(r.trunkTubes)}</td></tr>`).join('')}</tbody></table>`;}
+function nodeWarningsHtml(det){if(!det?.nodeWarnings?.length) return '<p><span class="pill good">Sin alertas de PoE</span></p>'; return `<ul>${det.nodeWarnings.map(w=>`<li class="bad">${esc(w)}</li>`).join('')}</ul>`;}
 
-    function validation(d, full, partial){
-      const tech = [
-        `Analítica prevista: Tripwire + Intrusion Detection con clasificación humano/vehículo.`,
-        `PoE máximo declarado: ${fmt(d.poeMax)} m; diseño usando promedio de ${fmt(d.utpPerCam)} m por cámara.`,
-        `Segmentación RETIE: datos y energía deben ir independientes.`,
-        `Topología planteada: Cámara → Nodo → Backbone fibra → NVR.`
-      ];
-      const oper = [
-        `FULL prioriza continuidad de cobertura alrededor de todo el perímetro.`,
-        `PARCIAL optimiza CAPEX excluyendo ${fmt(d.excluded)} m sin sacrificar accesos ni puntos críticos.`,
-        `Nodos estimados: FULL ${full.nodes}, PARCIAL ${partial.nodes}.`,
-        `Se recomienda validar visuales reales, alturas, vegetación, postes y acometidas antes del cierre comercial.`
-      ];
-      const com = [
-        `La propuesta FULL ofrece mayor robustez de detección y menor riesgo operacional.`,
-        `La propuesta PARCIAL reduce cantidad de cámaras y metraje de infraestructura.`,
-        `Se pueden emitir dos versiones: técnica detallada y comercial resumida para cliente final.`
-      ];
-      return { tech, oper, com };
-    }
+function buildCoordinateRows(proposal){
+  let rows=[]; const per=geoState.perimeter?.length?geoState.perimeter:generateSyntheticPerimeter(); const points=distributePointsOnPerimeter(per,proposal.total);
+  points.forEach((p,i)=>{let type=modelNames.main; if(i<proposal.accessCams) type=modelNames.access; if(i>=proposal.accessCams && i<proposal.accessCams+proposal.blind.cross) type='Cruzada '+modelNames.main; if(i>=proposal.accessCams+proposal.blind.cross && i<proposal.accessCams+proposal.blind.cross+proposal.blind.fish) type=modelNames.fisheye; if(i>=proposal.accessCams+proposal.blind.cross+proposal.blind.fish && i<proposal.accessCams+proposal.blind.total) type=modelNames.wide180; rows.push({id:`CAM-${i+1}`,lat:p.lat,lng:p.lng,type,orientation:Math.round((i*(360/Math.max(proposal.total,1))))});});
+  return rows;
+}
+function coordTable(proposal){const rows=buildCoordinateRows(proposal); return `<table><thead><tr><th>ID</th><th>Latitud</th><th>Longitud</th><th>Tipo</th><th>Orientación</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.id}</td><td>${r.lat.toFixed(6)}</td><td>${r.lng.toFixed(6)}</td><td>${esc(r.type)}</td><td>${r.orientation}°</td></tr>`).join('')}</tbody></table>`;}
 
-    function renderMetrics(full, partial, d){
-      const metrics = document.getElementById('metrics');
-      metrics.innerHTML = `
-        <div class="metric"><div class="k">Proyecto</div><div class="v">${d.projectType}</div></div>
-        <div class="metric"><div class="k">Cámaras FULL</div><div class="v">${full.total}</div></div>
-        <div class="metric"><div class="k">Cámaras PARCIAL</div><div class="v">${partial.total}</div></div>
-        <div class="metric"><div class="k">NVR</div><div class="v" style="font-size:18px">${d.nvr}</div></div>
-      `;
-      document.getElementById('tags').innerHTML = `
-        <span class="tag">Resolución ${d.resolution}</span>
-        <span class="tag">${d.fps} FPS</span>
-        <span class="tag">${d.compression}</span>
-        <span class="tag">Ruijie PoE</span>
-        <span class="tag">Backbone fibra</span>
-        <span class="tag">RETIE</span>
-      `;
-    }
+function renderReport(d,full,partial){
+  const det=d.detailed?.summary, v=validation(d,full,partial); const infraSource=d.useDetailed&&det?`<p><b>Fuente de infraestructura:</b> cálculo detallado por nodos, ruta compartida, derivaciones reales, uplinks y AC de gabinete.</p>${detailedSummaryTable(det)}<h3>Desglose por nodo</h3>${nodeBreakdownTable(det)}<h3>Alertas de tramos</h3>${nodeWarningsHtml(det)}`:`<p><b>Fuente de infraestructura:</b> estimación rápida basada en promedio de ${fmt(d.utpPerCam)} m por cámara y ${fmt(d.fiberPerNode)} m por nodo.</p>`;
+  document.getElementById('report').innerHTML=`
+    <h2>${esc(d.projectName)}</h2>
+    <div class="muted">Cliente: ${esc(d.clientName)} · ${esc(d.city)} · ${esc(d.address)} · Fecha: ${esc(d.surveyDate||'Sin definir')} · Responsable: ${esc(d.surveyor)}</div>
+    <p><b>Levantamiento:</b> ${esc(d.siteNotes)}</p><p><b>Riesgos:</b> ${esc(d.siteRisks)}</p>
+    <h2>Variables de entrada</h2>
+    <table><thead><tr><th>Variable</th><th>Valor</th></tr></thead><tbody>
+      <tr><td>Perímetro total</td><td>${fmt(d.perimeter)} m</td></tr><tr><td>Tramo excluido</td><td>${fmt(d.excluded)} m</td></tr><tr><td>Altura de instalación</td><td>${fmt(d.height)} m</td></tr><tr><td>Accesos</td><td>${fmt(d.accesses)}</td></tr><tr><td>Esquinas críticas</td><td>${fmt(d.corners)}</td></tr><tr><td>Ángulos &gt;70°</td><td>${fmt(d.angles70)}</td></tr><tr><td>Puntos ciegos</td><td>${esc(d.blindMode)} (cruzadas ${fmt(d.manualCross)}, fisheye ${fmt(d.manualFish)}, 180° ${fmt(d.manual180)})</td></tr>
+    </tbody></table>
 
-    function bomTable(bom){
-      return `<table>
-        <thead><tr><th>Ítem</th><th>Cantidad</th><th>Observación</th></tr></thead>
-        <tbody>${bom.map(r => `<tr><td>${r.item}</td><td>${fmt(r.qty)}</td><td>${r.note}</td></tr>`).join('')}</tbody>
-      </table>`;
-    }
+    <h2>Propuesta 1 · FULL cobertura</h2>
+    <p><b>Cálculo base:</b> ${fmt(full.baseLength)} / ${fmt(d.coverage)} = <b>${full.baseCams}</b> cámaras base.</p>
+    <p><b>Refuerzo puntos ciegos:</b> ${full.blind.total} en total. Cruzadas: ${full.blind.cross}, Fisheye: ${full.blind.fish}, 180°: ${full.blind.wide180}. ${esc(full.blind.reason)}.</p>
+    <p><b>Accesos:</b> ${full.accessCams}. <b>Total:</b> <span class="good">${full.total} cámaras</span> y <b>${full.nodes} nodos estimados</b>.</p>
+    <h3>BOM FULL</h3>${bomTable(full.bom)}
+    <h3>Almacenamiento FULL</h3>${storageTable(full.storage)}
 
-    function storageTable(rows){
-      return `<table>
-        <thead><tr><th>Bitrate</th><th>GB / día</th><th>Días aprox. con HDD instalado</th></tr></thead>
-        <tbody>${rows.map(r => `<tr><td>${r.mbps} Mbps</td><td>${fmt(r.gbDay)}</td><td>${fmt(r.days)} días</td></tr>`).join('')}</tbody>
-      </table>`;
-    }
+    <h2>Propuesta 2 · PARCIAL optimizada</h2>
+    <p><b>Cálculo base:</b> (${fmt(d.perimeter)} - ${fmt(d.excluded)}) / ${fmt(d.coverage)} = <b>${partial.baseCams}</b> cámaras base.</p>
+    <p><b>Refuerzo puntos ciegos:</b> ${partial.blind.total} en total. Cruzadas: ${partial.blind.cross}, Fisheye: ${partial.blind.fish}, 180°: ${partial.blind.wide180}.</p>
+    <p><b>Accesos:</b> ${partial.accessCams}. <b>Total:</b> <span class="warn">${partial.total} cámaras</span> y <b>${partial.nodes} nodos estimados</b>.</p>
+    <h3>BOM PARCIAL</h3>${bomTable(partial.bom)}
+    <h3>Almacenamiento PARCIAL</h3>${storageTable(partial.storage)}
 
-    function coordTable(d, proposal){
-      const rows = [];
-      const count = proposal.total;
-      for(let i=1;i<=count;i++){
-        const lat = (3.4400 + i * 0.00012).toFixed(6);
-        const lng = (-76.5300 - i * 0.00010).toFixed(6);
-        let type = modelNames.main;
-        if (i <= proposal.accessCams) type = modelNames.access;
-        if (i > proposal.accessCams && i <= proposal.accessCams + proposal.blindExtra) type = proposal.blind.model;
-        const orient = (i * (360 / count)).toFixed(0) + '°';
-        rows.push(`<tr><td>CAM-${i}</td><td>${lat}</td><td>${lng}</td><td>${type}</td><td>${orient}</td></tr>`);
-      }
-      return `<table>
-        <thead><tr><th>ID</th><th>Latitud</th><th>Longitud</th><th>Tipo</th><th>Orientación</th></tr></thead>
-        <tbody>${rows.join('')}</tbody>
-      </table>`;
-    }
+    <h2>Infraestructura y metrajes</h2>${infraSource}
+    <h2>Validación técnica</h2><ul>${v.tech.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+    <h2>Validación operativa</h2><ul>${v.oper.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+    <h2>Validación comercial</h2><ul>${v.com.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+    <details open><summary>Tabla de coordenadas · FULL</summary>${coordTable(full)}</details>
+    <details><summary>Tabla de coordenadas · PARCIAL</summary>${coordTable(partial)}</details>`;
+}
 
-    function renderReport(d, full, partial){
-      const v = validation(d, full, partial);
-      const report = document.getElementById('report');
-      report.innerHTML = `
-        <h2>${d.projectName}</h2>
-        <div class="muted">Tipo: ${d.projectType} · Altura: ${fmt(d.height)} m · Perímetro: ${fmt(d.perimeter)} m · Tramo excluido: ${fmt(d.excluded)} m</div>
-        <p>${d.siteNotes}</p>
+function generateSyntheticPerimeter(){
+  const baseLat=num('hqLat')||3.451647, baseLng=num('hqLng')||-76.531985; const latDelta=0.0012, lngDelta=0.0012;
+  if(val('shape')==='rect') return [{lat:baseLat+latDelta,lng:baseLng-lngDelta},{lat:baseLat+latDelta,lng:baseLng+lngDelta},{lat:baseLat-latDelta,lng:baseLng+lngDelta},{lat:baseLat-latDelta,lng:baseLng-lngDelta},{lat:baseLat+latDelta,lng:baseLng-lngDelta}];
+  if(val('shape')==='lshape') return [{lat:baseLat+latDelta,lng:baseLng-lngDelta},{lat:baseLat+latDelta,lng:baseLng+0.0004},{lat:baseLat+0.0002,lng:baseLng+0.0004},{lat:baseLat+0.0002,lng:baseLng+lngDelta},{lat:baseLat-latDelta,lng:baseLng+lngDelta},{lat:baseLat-latDelta,lng:baseLng-lngDelta},{lat:baseLat+latDelta,lng:baseLng-lngDelta}];
+  return [{lat:baseLat+0.0011,lng:baseLng-0.0011},{lat:baseLat+0.0012,lng:baseLng+0.0005},{lat:baseLat+0.0003,lng:baseLng+0.0013},{lat:baseLat-0.001,lng:baseLng+0.001},{lat:baseLat-0.0012,lng:baseLng-0.0003},{lat:baseLat-0.0002,lng:baseLng-0.0013},{lat:baseLat+0.0011,lng:baseLng-0.0011}];
+}
 
-        <h2>Propuesta 1 · FULL cobertura</h2>
-        <p><b>Cálculo base:</b> ${fmt(full.baseLength)} / ${fmt(d.coverage)} = <b>${full.baseCams}</b> cámaras base.</p>
-        <p><b>Refuerzo de puntos ciegos:</b> ${full.blindExtra} con estrategia <b>${full.blind.type}</b> (${full.blind.reason}).</p>
-        <p><b>Accesos:</b> ${full.accessCams}. <b>Total:</b> <span class="good">${full.total} cámaras</span> y <b>${full.nodes} nodos</b>.</p>
-        <h3>Distribución</h3>
-        <p>Perímetro principal: ${full.dist.perimeterMain} · Accesos: ${full.dist.access} · Refuerzos: ${full.dist.blind}</p>
-        <h3>BOM FULL</h3>
-        ${bomTable(full.bom)}
-        <h3>Almacenamiento FULL</h3>
-        ${storageTable(full.storage)}
+function distributePointsOnPerimeter(poly,count){
+  if(!poly||poly.length<2||count<=0) return [];
+  const segLens=[]; let total=0; for(let i=0;i<poly.length-1;i++){const len=Math.hypot(poly[i+1].lat-poly[i].lat,poly[i+1].lng-poly[i].lng); segLens.push(len); total+=len;}
+  const step=total/Math.max(count,1); const pts=[]; for(let i=0;i<count;i++){let target=step*(i+0.5), acc=0; for(let s=0;s<segLens.length;s++){if(acc+segLens[s]>=target){const t=(target-acc)/segLens[s]; pts.push({lat:poly[s].lat+(poly[s+1].lat-poly[s].lat)*t,lng:poly[s].lng+(poly[s+1].lng-poly[s].lng)*t}); break;} acc+=segLens[s]; }} return pts;
+}
 
-        <h2>Propuesta 2 · PARCIAL optimizada</h2>
-        <p><b>Cálculo base:</b> (${fmt(d.perimeter)} - ${fmt(d.excluded)}) / ${fmt(d.coverage)} = <b>${partial.baseCams}</b> cámaras base.</p>
-        <p><b>Refuerzo de puntos ciegos:</b> ${partial.blindExtra} con estrategia <b>${partial.blind.type}</b>.</p>
-        <p><b>Accesos:</b> ${partial.accessCams}. <b>Total:</b> <span class="warn">${partial.total} cámaras</span> y <b>${partial.nodes} nodos</b>.</p>
-        <h3>BOM PARCIAL</h3>
-        ${bomTable(partial.bom)}
-        <h3>Almacenamiento PARCIAL</h3>
-        ${storageTable(partial.storage)}
+function projectToCanvas(points,w,h,pad=40){
+  const all=[]; if(geoState.perimeter?.length) all.push(...geoState.perimeter); if(points?.length) all.push(...points); if(geoState.coords?.length) all.push(...geoState.coords.map(c=>({lat:c.lat,lng:c.lng}))); all.push({lat:num('hqLat'),lng:num('hqLng')});
+  const src=all.length?all:generateSyntheticPerimeter(); const lats=src.map(p=>p.lat), lngs=src.map(p=>p.lng); const minLat=Math.min(...lats), maxLat=Math.max(...lats), minLng=Math.min(...lngs), maxLng=Math.max(...lngs); const dx=Math.max(maxLng-minLng,0.00001), dy=Math.max(maxLat-minLat,0.00001); const sx=(w-2*pad)/dx, sy=(h-2*pad)/dy;
+  return (p)=>({x:pad+(p.lng-minLng)*sx,y:h-pad-(p.lat-minLat)*sy});
+}
 
-        <h2>Validación técnica</h2>
-        <ul>${v.tech.map(x=>`<li>${x}</li>`).join('')}</ul>
+function drawPlan(d,full){
+  const canvas=document.getElementById('planCanvas'), ctx=canvas.getContext('2d'); ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle='#edf3ff'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  if(geoState.image){const img=new Image(); img.onload=()=>{ctx.globalAlpha=.35; ctx.drawImage(img,0,0,canvas.width,canvas.height); ctx.globalAlpha=1; drawVectors(ctx,canvas,d,full);}; img.src=geoState.image;} else drawVectors(ctx,canvas,d,full);
+}
+function drawVectors(ctx,canvas,d,full){
+  const perimeter=geoState.perimeter?.length?geoState.perimeter:generateSyntheticPerimeter(); const project=projectToCanvas(perimeter,canvas.width,canvas.height); const perimeterPts=perimeter.map(project);
+  ctx.strokeStyle='#2f5ea8'; ctx.lineWidth=4; ctx.beginPath(); perimeterPts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y)); ctx.stroke();
+  ctx.fillStyle='#24437c'; perimeterPts.forEach((p,i)=>{ctx.beginPath(); ctx.arc(p.x,p.y,6,0,Math.PI*2); ctx.fill(); ctx.fillText('V'+(i+1),p.x+8,p.y-8);});
+  const hq=project({lat:num('hqLat'),lng:num('hqLng')}); ctx.fillStyle='#1d7c5d'; ctx.fillRect(hq.x-70,hq.y-20,140,42); ctx.fillStyle='#fff'; ctx.font='bold 14px Arial'; ctx.fillText(val('hqName')||'NVR / Cabecera',hq.x-58,hq.y+5);
+  const cameras=buildCoordinateRows(full); cameras.forEach((c,i)=>{const p=project(c); ctx.fillStyle=c.type.includes('180')?'#d63031':(c.type.includes('Fisheye')?'#8e44ad':(c.type.includes('Cruzada')?'#ff7f11':(i<full.accessCams?'#e67e22':'#111'))); ctx.beginPath(); ctx.arc(p.x,p.y,5,0,Math.PI*2); ctx.fill(); const angle=(c.orientation/180)*Math.PI; ctx.strokeStyle='#111'; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+Math.cos(angle)*20,p.y-Math.sin(angle)*20); ctx.stroke();});
+  (geoState.coords||[]).forEach((c,i)=>{const p=project(c); ctx.fillStyle='#0aa'; ctx.fillRect(p.x-4,p.y-4,8,8); ctx.fillStyle='#0a2d4f'; ctx.fillText(c.name||('P'+(i+1)),p.x+6,p.y-6);});
+  if(d.useDetailed&&d.detailed?.nodes?.length){const nodePts=distributePointsOnPerimeter(perimeter,d.detailed.nodes.length); d.detailed.nodes.forEach((n,idx)=>{const p=project(nodePts[idx]||perimeter[0]); ctx.fillStyle='#6f46c9'; ctx.fillRect(p.x-24,p.y-14,48,28); ctx.fillStyle='#fff'; ctx.fillText('N'+(idx+1),p.x-8,p.y+5); ctx.strokeStyle='#8b69da'; ctx.setLineDash([8,6]); ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(hq.x,hq.y); ctx.stroke(); ctx.setLineDash([]);});}
+  ctx.fillStyle='#111'; ctx.fillText('Negro: perimetral · Naranja: acceso/cruzada · Morado: fisheye/nodo · Rojo: 180°',20,canvas.height-18);
+}
 
-        <h2>Validación operativa</h2>
-        <ul>${v.oper.map(x=>`<li>${x}</li>`).join('')}</ul>
+async function handleSiteImage(e){const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=ev=>{geoState.image=ev.target.result; const img=document.getElementById('siteImagePreview'); img.src=geoState.image; img.style.display='block'; generateProposal();}; reader.readAsDataURL(file);}
 
-        <h2>Validación comercial</h2>
-        <ul>${v.com.map(x=>`<li>${x}</li>`).join('')}</ul>
+async function handleGeoFile(e){const file=e.target.files[0]; if(!file) return; try{ const name=file.name.toLowerCase(); if(name.endsWith('.csv')) parseCSV(await file.text(),'CSV'); else if(name.endsWith('.kml')) parseKML(await file.text(),'KML'); else if(name.endsWith('.kmz')) await parseKMZ(file); else if(name.endsWith('.json')) applyGeoJSON(JSON.parse(await file.text())); document.getElementById('geoSummary').textContent=`Cargado: ${file.name}. Puntos: ${geoState.coords.length}. Perímetro: ${geoState.perimeter.length}.`; generateProposal(); } catch(err){ alert('No se pudo procesar el archivo geográfico.'); console.error(err);} finally {e.target.value='';} }
+function parseCSV(text,source){const lines=text.trim().split(/\r?\n/); if(lines.length<2) return; const headers=lines[0].split(',').map(h=>h.trim().toLowerCase()); const latIdx=headers.findIndex(h=>['lat','latitude','latitud'].includes(h)); const lngIdx=headers.findIndex(h=>['lng','lon','long','longitude','longitud'].includes(h)); const nameIdx=headers.findIndex(h=>['name','nombre','id'].includes(h)); const typeIdx=headers.findIndex(h=>['type','tipo'].includes(h)); geoState.coords=[]; lines.slice(1).forEach(line=>{const cols=line.split(','); const lat=Number(cols[latIdx]); const lng=Number(cols[lngIdx]); if(Number.isFinite(lat)&&Number.isFinite(lng)) geoState.coords.push({lat,lng,name:cols[nameIdx]||'',type:cols[typeIdx]||''});}); geoState.source=source;}
+function parseKML(text,source){const xml=new DOMParser().parseFromString(text,'text/xml'); const coords=[]; const perimeter=[]; [...xml.getElementsByTagName('Placemark')].forEach(pm=>{const name=pm.getElementsByTagName('name')[0]?.textContent||''; const point=pm.getElementsByTagName('Point')[0]; const line=pm.getElementsByTagName('LineString')[0]; const poly=pm.getElementsByTagName('Polygon')[0]; if(point){const raw=point.getElementsByTagName('coordinates')[0]?.textContent?.trim(); if(raw){const [lng,lat]=raw.split(',').map(Number); if(Number.isFinite(lat)&&Number.isFinite(lng)) coords.push({lat,lng,name});}} if(line||poly){const raw=(line||poly).getElementsByTagName('coordinates')[0]?.textContent||''; const arr=raw.trim().split(/\s+/).map(c=>{const [lng,lat]=c.split(',').map(Number); return {lat,lng};}).filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lng)); if(arr.length>2 && perimeter.length===0) perimeter.push(...arr);}}); if(coords.length) geoState.coords=coords; if(perimeter.length) geoState.perimeter=perimeter; geoState.source=source; geoState.raw=text;}
+async function parseKMZ(file){if(!window.JSZip) throw new Error('JSZip no disponible'); const zip=await JSZip.loadAsync(file); let kmlFile=null; zip.forEach((path,entry)=>{if(!entry.dir && path.toLowerCase().endsWith('.kml') && !kmlFile) kmlFile=entry;}); if(!kmlFile) throw new Error('No se encontró KML dentro del KMZ'); const kml=await kmlFile.async('string'); parseKML(kml,'KMZ');}
+function applyGeoJSON(data){ if(data.geo){Object.assign(geoState,data.geo); geoState.source=data.geo.source||'JSON';} else {Object.assign(geoState,data);} }
 
-        <details open>
-          <summary>Tabla de coordenadas – FULL</summary>
-          ${coordTable(d, full)}
-        </details>
+function buildKML(){ const d=getData(), full=calcProposal('FULL',d), rows=buildCoordinateRows(full), perimeter=geoState.perimeter?.length?geoState.perimeter:generateSyntheticPerimeter(); const coordToKml=p=>`${p.lng},${p.lat},0`; return `<?xml version="1.0" encoding="UTF-8"?><kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>${esc(d.projectName)}</name><Folder><name>Cabecera</name><Placemark><name>${esc(d.hqName)}</name><Point><coordinates>${d.hqLng},${d.hqLat},0</coordinates></Point></Placemark></Folder><Folder><name>Perímetro</name><Placemark><name>Perímetro</name><LineString><tessellate>1</tessellate><coordinates>${perimeter.map(coordToKml).join(' ')}</coordinates></LineString></Placemark></Folder><Folder><name>Cámaras FULL</name>${rows.map(r=>`<Placemark><name>${r.id}</name><description>${esc(r.type)} · ${r.orientation}°</description><Point><coordinates>${r.lng},${r.lat},0</coordinates></Point></Placemark>`).join('')}</Folder></Document></kml>`; }
+function exportKML(){const kml=buildKML(); downloadBlob(new Blob([kml],{type:'application/vnd.google-earth.kml+xml'}), slugify(val('projectName')||'cctv')+'.kml');}
+async function exportKMZ(){ if(!window.JSZip){alert('No se pudo exportar KMZ porque JSZip no está disponible.'); return;} const zip=new JSZip(); zip.file('doc.kml',buildKML()); const blob=await zip.generateAsync({type:'blob'}); downloadBlob(blob,slugify(val('projectName')||'cctv')+'.kmz'); }
+function slugify(s){return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');}
+function downloadBlob(blob,name){const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),500);} 
 
-        <details>
-          <summary>Tabla de coordenadas – PARCIAL</summary>
-          ${coordTable(d, partial)}
-        </details>
-      `;
-    }
+function generateProposal(){const d=getData(), full=calcProposal('FULL',d), partial=calcProposal('PARCIAL',d); renderMetrics(full,partial,d); renderReport(d,full,partial); drawPlan(d,full);}
+function loadDemo(){ document.getElementById('surveyDate').value=todayISO(); document.getElementById('projectName').value='Copropiedad Perimetral Demo'; document.getElementById('clientName').value='Conjunto Demo'; document.getElementById('perimeter').value=550; document.getElementById('excluded').value=70; document.getElementById('height').value=4; document.getElementById('projectType').value='Copropiedad'; document.getElementById('shape').value='irregular'; document.getElementById('accesses').value=3; document.getElementById('corners').value=6; document.getElementById('angles70').value=4; document.getElementById('siteNotes').value='Predio con cambios de dirección, accesos múltiples y necesidad de propuesta FULL y PARCIAL.'; document.getElementById('useDetailed').value='yes'; toggleDetailed(); document.getElementById('numNodos').value=3; generateNodes(); const seed=[{cams:7,shared:18,sw:140,type:'fibra',ac:32,d:[5,8,10,12,14,7,9]},{cams:6,shared:15,sw:110,type:'fibra',ac:25,d:[6,9,11,13,7,8]},{cams:5,shared:22,sw:85,type:'utp',ac:20,d:[4,7,9,12,6]}]; seed.forEach((n,i)=>{document.getElementById(`camN${i}`).value=n.cams; document.getElementById(`sharedUtp${i}`).value=n.shared; document.getElementById(`swDist${i}`).value=n.sw; document.getElementById(`swTipo${i}`).value=n.type; document.getElementById(`acDist${i}`).value=n.ac; generateCameraInputs(i); n.d.forEach((v,idx)=>document.getElementById(`n${i}c${idx+1}`).value=v);}); geoState.perimeter=generateSyntheticPerimeter(); geoState.source='Demo'; generateProposal();}
+function serializeAll(){return getData();}
+function downloadJSON(){downloadBlob(new Blob([JSON.stringify(serializeAll(),null,2)],{type:'application/json'}), slugify(val('projectName')||'cctv')+'_consolidado.json');}
+function downloadCSV(){const d=getData(), full=calcProposal('FULL',d), partial=calcProposal('PARCIAL',d), det=d.detailed?.summary; const rows=[['Concepto','Valor'],['Proyecto',d.projectName],['Cliente',d.clientName],['Perímetro',d.perimeter],['Tramo excluido',d.excluded],['FULL cámaras',full.total],['PARCIAL cámaras',partial.total],['FULL nodos',full.nodes],['PARCIAL nodos',partial.nodes],['Detallado UTP',det?det.totalUTP:''],['Detallado fibra',det?det.totalFiber:''],['Detallado AC',det?det.totalAC:''],['Detallado tubería total',det?det.tuberiaTotal:''],['Fuente geográfica',geoState.source||'']]; const csv=rows.map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n'); downloadBlob(new Blob([csv],{type:'text/csv;charset=utf-8;'}), slugify(val('projectName')||'cctv')+'_resumen.csv');}
+function loadConfigFile(){document.getElementById('fileInput').click();}
+function handleConfigFile(e){const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=function(ev){ try{ applyData(JSON.parse(ev.target.result)); } catch(err){ alert('No se pudo cargar el JSON.'); } finally {e.target.value='';} }; reader.readAsText(file);}
+function applyData(data){const ids=['projectName','clientName','city','address','surveyDate','surveyor','perimeter','excluded','height','projectType','shape','accesses','corners','angles70','supports','vehicularAccess','pedestrianAccess','siteNotes','siteRisks','resolution','fps','compression','nvr','hdd','coverage','utpPerCam','fiberPerNode','switchPorts','hddTB','poeMax','tailPct','tailPctInfra','maxUtpTube','nodeMargin','fiberCoresPerNode','blindMode','manualCross','manualFish','manual180','hqLat','hqLng','hqName']; ids.forEach(id=>{if(data[id]!==undefined) document.getElementById(id).value=data[id];}); if(data.models) ['m2449','m1241','m3449','m5641','m180'].forEach(k=>{if(data.models[k]!==undefined) document.getElementById(k).checked=!!data.models[k];}); document.getElementById('useDetailed').value=data.useDetailed?'yes':'no'; toggleDetailed(); if(data.detailed?.nodes?.length){document.getElementById('numNodos').value=data.detailed.nodes.length; generateNodes(); data.detailed.nodes.forEach((n,i)=>{document.getElementById(`camN${i}`).value=n.cameras; document.getElementById(`sharedUtp${i}`).value=n.sharedUtp||0; document.getElementById(`swDist${i}`).value=n.swDist; document.getElementById(`swTipo${i}`).value=n.swTipo; document.getElementById(`acDist${i}`).value=n.acDist; generateCameraInputs(i); (n.camDists||[]).forEach((v,idx)=>{const el=document.getElementById(`n${i}c${idx+1}`); if(el) el.value=v;});});} if(data.geo) applyGeoJSON(data); generateProposal();}
 
-    function drawPlan(d, full, partial){
-      const canvas = document.getElementById('planCanvas');
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      ctx.fillStyle = '#edf3ff';
-      ctx.fillRect(0,0,canvas.width,canvas.height);
-
-      const shape = d.shape;
-      const points = shape === 'rect'
-        ? [[140,100],[860,100],[860,400],[140,400]]
-        : shape === 'lshape'
-          ? [[140,100],[720,100],[720,220],[860,220],[860,400],[140,400]]
-          : [[140,120],[730,90],[860,200],[790,390],[250,420],[120,260]];
-
-      ctx.strokeStyle = '#2f5ea8';
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      points.forEach((p,i)=> i===0 ? ctx.moveTo(p[0],p[1]) : ctx.lineTo(p[0],p[1]));
-      ctx.closePath();
-      ctx.stroke();
-
-      ctx.fillStyle = '#24437c';
-      points.forEach((p,i)=>{
-        ctx.beginPath(); ctx.arc(p[0],p[1],6,0,Math.PI*2); ctx.fill();
-        ctx.fillText('V'+(i+1), p[0]+10, p[1]-8);
-      });
-
-      // NVR
-      ctx.fillStyle = '#1d7c5d';
-      ctx.fillRect(430, 228, 120, 56);
-      ctx.fillStyle = '#fff';
-      ctx.font = 'bold 14px Arial';
-      ctx.fillText('NVR / CABECERA', 446, 260);
-
-      // Nodes
-      const nodeCount = full.nodes;
-      const nodePoints = [];
-      for(let i=0;i<nodeCount;i++){
-        const x = 180 + i * ((640)/(Math.max(nodeCount-1,1)));
-        const y = i % 2 === 0 ? 60 : 455;
-        nodePoints.push([x,y]);
-        ctx.fillStyle = '#6f46c9';
-        ctx.fillRect(x-26,y-16,52,32);
-        ctx.fillStyle = '#fff';
-        ctx.fillText('N'+(i+1), x-10, y+5);
-        ctx.strokeStyle = '#8b69da';
-        ctx.setLineDash([8,6]);
-        ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(490,256); ctx.stroke();
-        ctx.setLineDash([]);
-      }
-
-      // Cameras around perimeter based on FULL
-      const camCount = full.total;
-      const perimeterPath = [];
-      for(let i=0;i<points.length;i++){
-        const a = points[i], b = points[(i+1)%points.length];
-        perimeterPath.push([a,b]);
-      }
-      let remaining = camCount;
-      const cams = [];
-      perimeterPath.forEach((seg, idx)=>{
-        const take = Math.max(1, Math.round(camCount / perimeterPath.length));
-        for(let j=1;j<=take && remaining>0;j++,remaining--){
-          const t = j/(take+1);
-          const x = seg[0][0] + (seg[1][0]-seg[0][0]) * t;
-          const y = seg[0][1] + (seg[1][1]-seg[0][1]) * t;
-          cams.push([x,y,idx]);
-        }
-      });
-      while(remaining>0){ cams.push([points[0][0]+remaining*10, points[0][1], 0]); remaining--; }
-
-      cams.forEach((c,i)=>{
-        ctx.fillStyle = i < full.accessCams ? '#e67e22' : (i < full.accessCams + full.blindExtra ? '#d63031' : '#111');
-        ctx.beginPath(); ctx.arc(c[0],c[1],5,0,Math.PI*2); ctx.fill();
-        const angle = (i/cams.length) * Math.PI*2;
-        const dx = Math.cos(angle)*26, dy = Math.sin(angle)*26;
-        ctx.strokeStyle = '#111';
-        ctx.beginPath(); ctx.moveTo(c[0],c[1]); ctx.lineTo(c[0]+dx,c[1]+dy); ctx.stroke();
-      });
-
-      ctx.fillStyle = '#111';
-      ctx.font = '12px Arial';
-      ctx.fillText('Negro: perimetral · Naranja: acceso · Rojo: punto ciego/refuerzo', 20, 500);
-    }
-
-    function downloadJSON(){
-      const d = getData();
-      const full = calcProposal('FULL', d);
-      const partial = calcProposal('PARCIAL', d);
-      const payload = {input:d, full, partial};
-      const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'propuesta_cctv_perimetral.json';
-      a.click();
-    }
-
-    function loadDemo(){
-      document.getElementById('projectName').value = 'Copropiedad Perimetral Demo';
-      document.getElementById('perimeter').value = 550;
-      document.getElementById('excluded').value = 70;
-      document.getElementById('height').value = 4;
-      document.getElementById('projectType').value = 'Copropiedad';
-      document.getElementById('shape').value = 'irregular';
-      document.getElementById('accesses').value = 3;
-      document.getElementById('corners').value = 6;
-      document.getElementById('angles70').value = 4;
-      document.getElementById('siteNotes').value = 'Predio con cambios de dirección, accesos múltiples y necesidad de propuesta FULL y PARCIAL.';
-      generateProposal();
-    }
-
-    function generateProposal(){
-      const d = getData();
-      const full = calcProposal('FULL', d);
-      const partial = calcProposal('PARCIAL', d);
-      renderMetrics(full, partial, d);
-      renderReport(d, full, partial);
-      drawPlan(d, full, partial);
-    }
-
-    generateProposal();
-  </script>
+document.addEventListener('input',e=>{if(!['fileInput','geoFile','siteImage'].includes(e.target.id)) generateProposal();}); document.getElementById('surveyDate').value=todayISO(); toggleDetailed(); generateProposal();
+</script>
 </body>
 </html>
